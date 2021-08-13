@@ -130,6 +130,7 @@ dmypy.json
 
 # VSCode Docs
 .vscode
+.code-workspace
 
 # Config & testing files
 db/

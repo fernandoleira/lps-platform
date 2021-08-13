@@ -1,1 +1,1 @@
-"# lps-platform" 
+# Locator Pointer System (LPS) Platform
