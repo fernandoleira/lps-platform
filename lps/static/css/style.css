@@ -1,8 +1,28 @@
-/* Set the size of the div element that contains the map */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-flow: column;
+}
+
+header {
+    flex: 0 1 auto;
+    padding: 10px 0px;
+    background-color: #333;
+    text-align: center;
+}
+
+header a {
+    color: #fff;
+}
+
 #map {
-    position: absolute;
-    height: 500px;
-    /* The height is 400 pixels */
+    /*position: absolute;*/
+    flex: 1 1 auto;
     width: 100%;
-    /* The width is the width of the web page */
+    height: 85%;
 }
