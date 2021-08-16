@@ -24,6 +24,11 @@ migrate = Migrate(app, db)
 
 from lps.models import *
 from lps.schemas import *
+from lps.seeds import seed_database
+
+@app.cli.command("seed_db")
+def seed_db():
+    seed_database(db)
 
 @app.route('/', methods=["GET"])
 def home():

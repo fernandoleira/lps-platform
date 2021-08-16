@@ -16,6 +16,21 @@ function initMap() {
         position: uluru,
         map: map,
     });
+
+    getData('http://127.0.0.1:5000/locators')
+    .then(res => {
+        for (var i = 0; i < res.length; i++)
+        {
+            // Convert to coordinates
+            var latLng = new google.maps.LatLng(res[i].lat, res[i].lon);
+
+            // Add Marker
+            new google.maps.Marker({
+                position: latLng,
+                map: map,
+            });
+        }
+    });
 }
 
 function findCurrentLocation() {
@@ -44,3 +59,17 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
     );
     infoWindow.open(map);
 }
+
+async function getData(url = '') {
+    // Default options are marked with *
+    const response = await fetch(url, {
+      method: 'GET', // *GET, POST, PUT, DELETE, etc.
+      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+      headers: {
+        'Content-Type': 'application/json'
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      }
+    });
+    
+    return await response.json(); // parses JSON response into native JavaScript objects
+  }

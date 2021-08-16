@@ -12,8 +12,8 @@ class Unit(db.Model):
     unit_id = Column('unit_id', UUID(as_uuid=True), primary_key=True)
     name = Column('name', VARCHAR(50), nullable=False, unique=True)
 
-    def __init__(self, name, user_id=uuid.uuid4()):
-        self.user_id = user_id
+    def __init__(self, name, unit_id=uuid.uuid4()):
+        self.unit_id = unit_id
         self.name = name
 
     def __repr__(self):
