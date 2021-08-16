@@ -1,4 +1,8 @@
 let map;
+const initMarkersDelay = 1500;
+
+const redMarkerIcon = "http://127.0.0.1:5000/img/red_marker.png";
+const userIcon = "http://127.0.0.1:5000/img/user.png";
 
 // Initialize and add the map
 function initMap() {
@@ -9,28 +13,36 @@ function initMap() {
     map = new google.maps.Map(document.getElementById("map"), {
         center: uluru,
         zoom: 8,
+        mapId: 'cb30c336b498ec72'
     });
 
-    // The marker, positioned at Uluru
+    findCurrentLocation();
+
+    /* The marker, positioned at Uluru
     const marker = new google.maps.Marker({
         position: uluru,
         map: map,
-    });
+    });*/
 
-    getData('http://127.0.0.1:5000/locators')
-    .then(res => {
-        for (var i = 0; i < res.length; i++)
-        {
-            // Convert to coordinates
-            var latLng = new google.maps.LatLng(res[i].lat, res[i].lon);
+    // Delay the request of markers
+    setTimeout(() => {
+        getData('http://127.0.0.1:5000/locators')
+        .then(res => {
+            for (var i = 0; i < res.length; i++)
+            {
+                // Convert to coordinates
+                var latLng = new google.maps.LatLng(res[i].lat, res[i].lon);
 
-            // Add Marker
-            new google.maps.Marker({
-                position: latLng,
-                map: map,
-            });
-        }
-    });
+                // Add Marker
+                new google.maps.Marker({
+                    position: latLng,
+                    icon: redMarkerIcon,
+                    map: map,
+                    animation: google.maps.Animation.DROP
+                });
+            }
+        });
+    }, initMarkersDelay);
 }
 
 function findCurrentLocation() {
@@ -41,7 +53,12 @@ function findCurrentLocation() {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude,
                 };
-                map.setCenter(pos);
+                new google.maps.Marker({
+                    position: pos,
+                    icon: userIcon,
+                    map: map
+                });
+                //map.setCenter(pos);
             }
         );
     } else {
@@ -66,8 +83,7 @@ async function getData(url = '') {
       method: 'GET', // *GET, POST, PUT, DELETE, etc.
       cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
       headers: {
-        'Content-Type': 'application/json'
-        // 'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json' // 'Content-Type': 'application/x-www-form-urlencoded',
       }
     });
     

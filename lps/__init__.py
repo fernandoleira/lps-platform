@@ -1,12 +1,12 @@
-from instance.config import GOOGLE_CLOUD_API_KEY
-from flask import Flask, render_template, request, jsonify, abort, url_for
-from flask.wrappers import Request
+import os
+from flask import Flask, render_template, request, jsonify, abort, url_for, send_file
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
 
 from lps.config import Config
+from instance.config import GOOGLE_CLOUD_API_KEY
 
 
 app = Flask(__name__,
@@ -26,9 +26,16 @@ from lps.models import *
 from lps.schemas import *
 from lps.seeds import seed_database
 
+
 @app.cli.command("seed_db")
 def seed_db():
     seed_database(db)
+
+@app.cli.command("reset_db")
+def reset_db():
+    LocatorPoint.query.delete()
+    Unit.query.delete()
+    db.session.commit()
 
 @app.route('/', methods=["GET"])
 def home():
