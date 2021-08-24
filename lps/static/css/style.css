@@ -9,16 +9,16 @@ body {
     flex-flow: column;
 }
 
-header {
+.navbar {
     flex: 0 1 auto;
-    padding: 5px 0px;
     background-color: #000;
     text-align: center;
 }
 
-header img {
+.navbar img {
     width: 100px;
 }
+
 
 #map {
     /*position: absolute;*/

@@ -1,6 +1,5 @@
 import os
 from flask import Flask, render_template, request, jsonify, abort, url_for, send_file
-from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
@@ -15,8 +14,6 @@ app = Flask(__name__,
             template_folder='templates'
 )
 app.config.from_object(Config)
-
-Bootstrap(app)
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)

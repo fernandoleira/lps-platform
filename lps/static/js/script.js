@@ -2,6 +2,10 @@ let map;
 const initMarkersDelay = 1500;
 
 const redMarkerIcon = "http://127.0.0.1:5000/img/red_marker.png";
+const blueMarkerIcon = "http://127.0.0.1:5000/img/blue_marker.png";
+const greenMarkerIcon = "http://127.0.0.1:5000/img/green_marker.png";
+const yellowMarkerIcon = "http://127.0.0.1:5000/img/yellow_marker.png";
+const purpleMarkerIcon = "http://127.0.0.1:5000/img/purple_marker.png";
 const userIcon = "http://127.0.0.1:5000/img/user.png";
 
 // Initialize and add the map
@@ -16,14 +20,6 @@ function initMap() {
         mapId: 'cb30c336b498ec72'
     });
 
-    findCurrentLocation();
-
-    /* The marker, positioned at Uluru
-    const marker = new google.maps.Marker({
-        position: uluru,
-        map: map,
-    });*/
-
     // Delay the request of markers
     setTimeout(() => {
         getData('http://127.0.0.1:5000/locators')
@@ -31,18 +27,49 @@ function initMap() {
             for (var i = 0; i < res.length; i++)
             {
                 // Convert to coordinates
-                var latLng = new google.maps.LatLng(res[i].lat, res[i].lon);
+                const latLng = new google.maps.LatLng(res[i].lat, res[i].lon);
 
                 // Add Marker
-                new google.maps.Marker({
+                const marker = new google.maps.Marker({
                     position: latLng,
                     icon: redMarkerIcon,
                     map: map,
                     animation: google.maps.Animation.DROP
                 });
+
+                const infoContent = `
+                <div class="infoWindow">
+                <h5>${res[i].title}</h5>
+                <span>${res[i].point_type}</span>
+                <p><b>Description:</b> ${res[i].description}</p>
+                <span>${res[i].created_at}</span>
+                </div>
+                `;
+
+                // Add InfoWindow
+                const infoWindow = new google.maps.InfoWindow({
+                    content: infoContent
+                });
+
+                // Open popup window when mouse is over marker
+                marker.addListener("mouseover", () => {
+                    infoWindow.open({
+                        anchor: marker,
+                        map,
+                        shouldFocus: false,
+                    });
+                });
+                
+                // Close popup window when mouse is notover marker
+                marker.addListener("mouseout", () => {
+                    infoWindow.close();
+                });
             }
         });
     }, initMarkersDelay);
+
+    // Finc current user location
+    findCurrentLocation();
 }
 
 function findCurrentLocation() {
@@ -83,7 +110,7 @@ async function getData(url = '') {
       method: 'GET', // *GET, POST, PUT, DELETE, etc.
       cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
       headers: {
-        'Content-Type': 'application/json' // 'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/jsonp' // 'Content-Type': 'application/x-www-form-urlencoded',
       }
     });
     
