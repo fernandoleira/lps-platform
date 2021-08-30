@@ -3,7 +3,7 @@ from lps import ma
 
 class UnitSchema(ma.Schema):
     class Meta:
-        fields = ('unit_id', 'unit_name')
+        fields = ('unit_id', 'name')
 
 class LocatorPointSchema(ma.Schema):
     class Meta:

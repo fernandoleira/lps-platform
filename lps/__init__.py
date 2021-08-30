@@ -12,21 +12,21 @@ app = Flask(__name__,
             static_url_path='',
             static_folder='static',
             template_folder='templates'
-)
+            )
 app.config.from_object(Config)
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 migrate = Migrate(app, db)
 
-from lps.models import *
-from lps.schemas import *
 from lps.seeds import seed_database
-
+from lps.schemas import *
+from lps.models import *
 
 @app.cli.command("seed_db")
 def seed_db():
     seed_database(db)
+
 
 @app.cli.command("reset_db")
 def reset_db():
@@ -34,18 +34,22 @@ def reset_db():
     Unit.query.delete()
     db.session.commit()
 
+
 @app.route('/', methods=["GET"])
 def home():
-    return render_template('index.html', google_api_key=GOOGLE_CLOUD_API_KEY), 200
+    units_q = Unit.query.all()
+    units = UnitSchema(many=True).dump(units_q)
+    points_q = LocatorPoint.query.all()
+    points = LocatorPointSchema(many=True).dump(points_q)
 
-@app.route('/locators', methods=["GET", "POST"])
+    print(units)
+
+    return render_template('index.html', units=units, google_api_key=GOOGLE_CLOUD_API_KEY), 200
+
+
+@app.route('/locators', methods=["GET", "POST", "PUT", "DELETE"])
 def locators():
-    if request.method == "GET":
-        q = LocatorPoint.query.all()
-        res = LocatorPointSchema(many=True).dump(q)
-        return jsonify(res)
-
-    else: # POST
+    if request.method == "POST":
         new_point = LocatorPoint(
             request.form['title'],
             request.form['description'],
@@ -58,3 +62,23 @@ def locators():
         db.session.add(new_point)
         db.session.commit()
         return jsonify(message="Point {point_id} has been inserted.".format(point_id=new_point.point_id)), 201
+    else:  # GET
+        points_q = LocatorPoint.query.all()
+        points = LocatorPointSchema(many=True).dump(points_q)
+        return jsonify(points), 200
+
+
+@app.route('/units', methods=["GET", "POST", "PUT", "DELETE"])
+def units():
+    if request.method == "POST":
+        new_unit = Unit(
+            request.form['name']
+        )
+
+        db.session.add(new_unit)
+        db.session.commit()
+        return jsonify(message="Unit {unit_id} has been inserted.".format(unit_id=new_unit.unit_id)), 201
+    else:  # GET
+        units_q = Unit.query.all()
+        units = UnitSchema(many=True).dump(units_q)
+        return jsonify(units), 200
