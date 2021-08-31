@@ -8,7 +8,11 @@ const userIcon = "http://127.0.0.1:5000/img/user.png";
 
 let map;
 let markers = [];
+let markersUnits = [];
 let infoWindows = [];
+
+let attrIdActive = "unit-btn-active";
+let activeUnitId = "";
 
 // Initialize and add the map
 function initMap() {
@@ -19,15 +23,14 @@ function initMap() {
     map = new google.maps.Map(document.getElementById("map"), {
         center: uluru,
         zoom: 8,
-        mapId: 'cb30c336b498ec72'
+        mapId: "cb30c336b498ec72"
     });
 
     // Delay the request of markers
     setTimeout(() => {
-        getData('http://127.0.0.1:5000/locators')
+        getData("http://127.0.0.1:5000/locators")
         .then(res => {
-            for (var i = 0; i < res.length; i++)
-            {
+            for (var i = 0; i < res.length; i++) {
                 // Convert to coordinates
                 const latLng = new google.maps.LatLng(res[i].lat, res[i].lon);
 
@@ -38,6 +41,8 @@ function initMap() {
                     map: map,
                     animation: google.maps.Animation.DROP
                 });
+                markers.push(marker);
+                markersUnits.push(res[i].unit_id);
 
                 // Add InfoWindow
                 const infoWindow = new google.maps.InfoWindow({
@@ -52,7 +57,7 @@ function initMap() {
                         shouldFocus: false,
                     });
                 });
-                
+
                 // Close popup window when mouse is notover marker
                 marker.addListener("mouseout", () => {
                     infoWindow.close();
@@ -65,14 +70,14 @@ function initMap() {
     findCurrentLocation();
 }
 
-async function getData(url = '') {
+async function getData(url = "") {
     // Default options are marked with *
     const response = await fetch(url, {
-        method: 'GET', // *GET, POST, PUT, DELETE, etc.
-        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        method: "GET", // *GET, POST, PUT, DELETE, etc.
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
         headers: {
-        'Content-Type': 'application/jsonp' // 'Content-Type': 'application/x-www-form-urlencoded',
-        }
+            "Content-Type": "application/jsonp", // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
     });
 
     return await response.json(); // parses JSON response into native JavaScript objects
@@ -135,24 +140,46 @@ function infoWindowContents(obj) {
     <p><b>Description:</b> ${obj.description}</p>
     <span>${obj.created_at}</span>
     </div>`;
-    
+
     return infoContent;
 }
 
+
+// Filter through markers to only show the ones having the active unbit id
+function unitFilter() {
+    for (var i = 0; i < markersUnits.length; i++) {
+        if (markersUnits[i] != activeUnitId) markers[i].setMap(null);
+    }
+}
+
+// Show all markers
+function clearUnitFilter() {
+    for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(map);
+    }
+}
+
+// When button selector press, create new marker filter
 function setUnitFilter(elm) {
-    // Check if element is currently selected
-    if (elm.id == "unit-btn-active") {
-      elm.id = "";
-      // Clear filter
-    }
+// Check if element is currently selected
+    if (elm.id == attrIdActive) {
+        elm.id = "";
+        activeUnitId = "";
+        clearUnitFilter();
+    } 
     else {
-      // Clear other elements selected
-      var current_elm = document.getElementById("unit-btn-active");
-      
-      // Clear selected element
-      if (current_elm != null) current_elm.id = "";
-      
-      // Assign selected button with id
-      elm.id = "unit-btn-active";
+    // Clear other elements selected
+        var current_elm = document.getElementById(attrIdActive);
+
+        // Clear selected element
+        if (current_elm != null) {
+            current_elm.id = "";
+            clearUnitFilter();
+        }
+
+        // Assign selected button with id
+        activeUnitId = elm.getElementsByTagName("p")[0].innerHTML;
+        elm.id = attrIdActive;
+        unitFilter();
     }
-  }
+}

@@ -35,6 +35,12 @@ def reset_db():
     db.session.commit()
 
 
+@app.cli.command("export_seed")
+def export_seed():
+    # TODO
+    pass
+
+
 @app.route('/', methods=["GET"])
 def home():
     units_q = Unit.query.all()
