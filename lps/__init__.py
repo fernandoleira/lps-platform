@@ -1,11 +1,8 @@
-import os
 from flask import Flask, render_template, request, jsonify, abort, url_for, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
-
-from lps.config import Config
-from instance.config import GOOGLE_CLOUD_API_KEY
+from instance.config import DevelopmentConfig, TestingConfig, ProductionConfig
 
 
 app = Flask(__name__,
@@ -13,19 +10,21 @@ app = Flask(__name__,
             static_folder='static',
             template_folder='templates'
             )
-app.config.from_object(Config)
+app.config.from_object(TestingConfig)
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 migrate = Migrate(app, db)
 
-from lps.seeds import seed_database
+from lps.seeds import seed_database, export_seed
 from lps.schemas import *
 from lps.models import *
 
 @app.cli.command("seed_db")
 def seed_db():
+    print("======== STARTING DATABASE SEED ========")
     seed_database(db)
+    print("======== SEED COMPLETED ========")
 
 
 @app.cli.command("reset_db")
@@ -33,24 +32,22 @@ def reset_db():
     LocatorPoint.query.delete()
     Unit.query.delete()
     db.session.commit()
+    print()
 
 
-@app.cli.command("export_seed")
-def export_seed():
-    # TODO
-    pass
+@app.cli.command("export_db")
+def export_db():
+    print("======== EXPORTING DATABASE SEED ========")
+    export_seed()
+    print("======== EXPORT COMPLETED ========")
 
 
 @app.route('/', methods=["GET"])
 def home():
     units_q = Unit.query.all()
     units = UnitSchema(many=True).dump(units_q)
-    points_q = LocatorPoint.query.all()
-    points = LocatorPointSchema(many=True).dump(points_q)
 
-    print(units)
-
-    return render_template('index.html', units=units, google_api_key=GOOGLE_CLOUD_API_KEY), 200
+    return render_template('index.html', units=units, google_api_key=app.config['GOOGLE_CLOUD_API_KEY']), 200
 
 
 @app.route('/locators', methods=["GET", "POST", "PUT", "DELETE"])
