@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify, abort, url_for, send
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
+from flask_cors import CORS
 from instance.config import DevelopmentConfig, TestingConfig, ProductionConfig
 
 
@@ -15,10 +16,12 @@ app.config.from_object(TestingConfig)
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 migrate = Migrate(app, db)
+CORS(app)
 
 from lps.seeds import seed_database, export_seed
 from lps.schemas import *
 from lps.models import *
+
 
 @app.cli.command("seed_db")
 def seed_db():
