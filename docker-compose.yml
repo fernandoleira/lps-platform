@@ -1,0 +1,32 @@
+# Docker-Compose file for FlirProcessWeb
+version: '3.7'
+
+services:
+  postgres:
+    image: postgres
+    restart: always
+    env_file:
+      - db/env/postgres.env
+    ports:
+      - 5432:5432
+    volumes:
+      - lps-data:/var/lib/postgresql/data/
+
+  lps:
+    image: docker.io/fernandoleira/lps-platform
+    restart: always
+    expose:
+      - 5000
+    depends_on:
+      - postgres
+
+  nginx:
+    image: docker.io/fernandoleira/lps-nginx
+    restart: always
+    ports:
+      - 80:80
+    depends_on:
+      - lps
+
+volumes:
+  lps-data: {}

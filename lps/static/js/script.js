@@ -1,10 +1,11 @@
+const appURL = window.location.href;
+const redMarkerIcon = appURL + "/img/red_marker.png";
+const blueMarkerIcon = appURL + "/img/blue_marker.png";
+const greenMarkerIcon = appURL + "/img/green_marker.png";
+const yellowMarkerIcon = appURL + "/img/yellow_marker.png";
+const purpleMarkerIcon = appURL + "/img/purple_marker.png";
+const userIcon = appURL + "/img/user.png";
 const initMarkersDelay = 1500;
-const redMarkerIcon = "http://127.0.0.1:5000/img/red_marker.png";
-const blueMarkerIcon = "http://127.0.0.1:5000/img/blue_marker.png";
-const greenMarkerIcon = "http://127.0.0.1:5000/img/green_marker.png";
-const yellowMarkerIcon = "http://127.0.0.1:5000/img/yellow_marker.png";
-const purpleMarkerIcon = "http://127.0.0.1:5000/img/purple_marker.png";
-const userIcon = "http://127.0.0.1:5000/img/user.png";
 
 let map;
 let markers = [];
@@ -28,7 +29,7 @@ function initMap() {
 
     // Delay the request of markers
     setTimeout(() => {
-        getData("http://127.0.0.1:5000/locators")
+        getData(appURL + "/locators")
         .then(res => {
             for (var i = 0; i < res.length; i++) {
                 // Convert to coordinates
