@@ -25,7 +25,7 @@
         {% endif %}
     {% endwith %}
 
-    <form action="/login" method="POST" novalidate>
+    <form action="/auth/login" method="POST" novalidate>
         {{ form.hidden_tag() }}
         <p>
             {{ form.email.label }}<br>
