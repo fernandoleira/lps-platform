@@ -1,4 +1,4 @@
-const appURL = window.location.href;
+const appURL = `http://${window.location.hostname}:${window.location.port}`;
 const redMarkerIcon = appURL + "/img/red_marker.png";
 const blueMarkerIcon = appURL + "/img/blue_marker.png";
 const greenMarkerIcon = appURL + "/img/green_marker.png";
@@ -29,7 +29,7 @@ function initMap() {
 
     // Delay the request of markers
     setTimeout(() => {
-        getData(appURL + "/locators")
+        getData(appURL + "/api/locators")
         .then(res => {
             for (var i = 0; i < res.length; i++) {
                 // Convert to coordinates

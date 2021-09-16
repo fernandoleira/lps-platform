@@ -1,9 +1,20 @@
 from lps import ma
 
 
+class UserSchema(ma.Schema):
+    class Meta:
+        fields = ('user_id', 'username', 'email', 'password', 'is_admin', 'is_super')
+
+
+class ApiKeySchema(ma.Schema):
+    class Meta:
+        fields = ('api_key', 'user_id', 'created_at', 'updated_at', 'expired_at')
+
+
 class UnitSchema(ma.Schema):
     class Meta:
-        fields = ('unit_id', 'name')
+        fields = ('unit_id', 'name', 'user_id')
+
 
 class LocatorPointSchema(ma.Schema):
     class Meta:

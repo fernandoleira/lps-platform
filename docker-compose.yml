@@ -1,4 +1,4 @@
-# Docker-Compose file for FlirProcessWeb
+# Docker-Compose file for LPS Platform
 version: '3.7'
 
 services:

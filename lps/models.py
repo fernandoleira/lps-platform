@@ -1,25 +1,116 @@
+from random import choice
 from datetime import datetime
-from sqlalchemy import Column, Integer, FLOAT, VARCHAR, TEXT, TIMESTAMP, Sequence, ForeignKey
+from dateutil.relativedelta import relativedelta
+from sqlalchemy import Column, Integer, FLOAT, String, TEXT, VARCHAR, BOOLEAN, TIMESTAMP, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 
 from lps import db
 
 
+# User class
+class User(db.Model, UserMixin):
+    __tablename__ = 'users'
+
+    user_id = Column('user_id', UUID(as_uuid=True), primary_key=True)
+    username = Column('username', VARCHAR(50), nullable=False, unique=True)
+    email = Column('email', VARCHAR(50), nullable=False, unique=True)
+    pswd_hash = Column('pswd_hash', String, nullable=False)
+    is_admin = Column('is_admin', BOOLEAN)
+    is_super = Column('is_super', BOOLEAN)
+
+    def __init__(self, username, email, password, is_admin=False, is_super=False, user_id=uuid.uuid4()):
+        self.user_id = user_id
+        self.username = username
+        self.email = email
+        self.pswd_hash = generate_password_hash(password)
+        self.is_admin = is_admin
+        self.is_super = is_super
+
+    def __repr__(self):
+        return '<user_id {}>'.format(self.user_id)
+
+    def check_password_hash(self, password):
+        return check_password_hash(self.pswd_hash, password)
+
+    def get_id(self):
+        return self.email
+
+
+# Api Key class
+class ApiKey(db.Model):
+    __tablename__ = 'api_keys'
+
+    api_key = Column('api_key', VARCHAR(20), primary_key=True)
+    user_id = Column('user_id', UUID(as_uuid=True), ForeignKey('users.user_id'), nullable=False)
+    created_at = Column('created_at', TIMESTAMP(0), nullable=False)
+    updated_at = Column('updated_at', TIMESTAMP(0), nullable=False)
+    expired_at = Column('expired_at', TIMESTAMP(0), nullable=False)
+
+    def __init__(self, user_id, api_key=None, created_at=None, updated_at=None):
+        self.user_id = user_id
+        if api_key != None:
+            self.api_key = api_key
+        else:
+            self.api_key = self._api_key_generator()
+        if created_at != None:
+            self.created_at = created_at
+        else:
+            self.created_at = datetime.now()
+        if updated_at != None:
+            self.updated_at = updated_at
+        else:
+            self.updated_at = self.created_at
+
+        self.expired_at = self._get_expiration_timestamp(self.updated_at.timestamp())
+
+    def __repr__(self):
+        return '<api_key {}>'.format(self.api_key)
+
+    def _api_key_generator(self):
+        chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+        new_key = str()
+
+        for i in range(20):
+            if i == 4 or i == 9 or i == 14:
+                new_key += '-'
+            else:
+                new_key += choice(chars) 
+
+        return new_key
+
+    def _get_current_timestamp(self):
+        return datetime.now().timestamp()
+
+    def _get_expiration_timestamp(self, ts):
+        expired_date = datetime.fromtimestamp(ts) + relativedelta(months=+3)
+        return expired_date
+
+    def update_api_expiration(self):
+        self.updated_at = datetime.now().timestamp()
+        self._get_expiration_timestamp(self.updated_at)
+
+
+# Unit class
 class Unit(db.Model):
     __tablename__ = 'units'
 
     unit_id = Column('unit_id', UUID(as_uuid=True), primary_key=True)
     name = Column('name', VARCHAR(50), nullable=False, unique=True)
+    user_id = Column('user_id', UUID(as_uuid=True), ForeignKey('users.user_id'), nullable=False)
 
-    def __init__(self, name, unit_id=uuid.uuid4()):
+    def __init__(self, name, user_id, unit_id=uuid.uuid4()):
         self.unit_id = unit_id
         self.name = name
+        self.user_id = user_id
 
     def __repr__(self):
         return '<unit {unit_id}>'.format(unit_id=self.unit_id)
 
 
+# Locator Point class
 class LocatorPoint(db.Model):
     __tablename__ = 'locator_points'
 

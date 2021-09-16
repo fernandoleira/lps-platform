@@ -5,6 +5,7 @@ LABEL org.opencontainers.image.authors="LeiraFernandoCortel@gmail.com"
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV FLASK_ENV "production"
 
 # Copy files
 COPY . .

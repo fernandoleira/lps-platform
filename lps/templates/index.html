@@ -2,25 +2,13 @@
 
 {% block navbar %}
 <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Units</h5>
+    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Index</h5>
     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 </div>
 <div class="offcanvas-body">
-    <ul class="unit-list">
-        {% for unit in units %}
-        <li>
-            <button class="unit-btn" onclick="setUnitFilter(this)">
-                <h3>{{ unit['name'] }}</h3>
-                <p>{{ unit['unit_id'] }}</p>
-            </button>
-        </li>
-        {% endfor %}
-    </ul>
 </div>
 {% endblock %}
 
 {% block content %}
-<div id="map"></div>
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&callback=initMap&libraries=&v=weekly" async></script>
+<h1>Welcome to the LPS Platform!</h1>
 {% endblock %}
