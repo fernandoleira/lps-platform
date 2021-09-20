@@ -1,4 +1,5 @@
 from functools import wraps
+from datetime import datetime
 from flask import Blueprint, jsonify, request
 from lps import db
 from lps.models import LocatorPoint, Unit, ApiKey
@@ -30,8 +31,8 @@ def api_key_required(func):
 
 
 # API ROUTES
-@api_bp.route('/locators', methods=["GET", "POST", "PUT", "DELETE"])
-#@api_key_required
+@api_bp.route('/locators', methods=["GET", "POST"])
+@api_key_required
 def locators():
     if request.method == "POST":
         new_point = LocatorPoint(
@@ -52,12 +53,40 @@ def locators():
         return jsonify(points), 200
 
 
-@api_bp.route('/units', methods=["GET", "POST", "PUT", "DELETE"])
-#@api_key_required
+@api_bp.route('/locators/<string:point_id>', methods=["GET", "PUT", "DELETE"])
+@api_key_required
+def locator(point_id):
+    point = LocatorPoint.query.filter_by(point_id=point_id).first()
+    if point:
+        if request.method == "PUT":
+            point.title = request.form['title']
+            point.description = request.form['description']
+            point.point_type = request.form['point_type']
+            point.lat = request.form['lat']
+            point.lon = request.form['lon']
+            point.unit_id = request.form['unit_id']
+            db.session.commit()
+            return jsonify(message="Point {point_id} has been updated.".format(point_id=point_id)), 201
+        elif request.method == "DELETE":
+            db.session.delete(point)
+            db.session.commit()
+            return jsonify(message="Point {point_id} has been deleted.".format(point_id=point_id)), 201
+        else:
+            res = LocatorPointSchema().dump(point)
+            return jsonify(res), 200
+    elif point_id is not None:
+        return jsonify(error="Point {point_id} does not exist.".format(point_id=point_id)), 404
+    else:
+        return jsonify(error="Point id is required."), 406
+
+
+@api_bp.route('/units', methods=["GET", "POST"])
+@api_key_required
 def units():
     if request.method == "POST":
         new_unit = Unit(
-            request.form['name']
+            request.form['name'],
+            request.form['user_id']
         )
 
         db.session.add(new_unit)
@@ -67,3 +96,25 @@ def units():
         units_q = Unit.query.all()
         units = UnitSchema(many=True).dump(units_q)
         return jsonify(units), 200
+
+
+@api_bp.route('/units/<string:unit_id>', methods=["GET", "PUT", "DELETE"])
+@api_key_required
+def unit(unit_id):
+    unit = Unit.query.filter_by(unit_id=unit_id).first()
+    if unit:
+        if request.method == "PUT":
+            unit.name = request.form['name']
+            db.session.commit()
+            return jsonify(message="Unit {unit_id} has been updated.".format(unit_id=unit_id)), 201
+        elif request.method == "DELETE":
+            db.session.delete(unit)
+            db.session.commit()
+            return jsonify(message="Unit {unit_id} has been deleted.".format(unit_id=unit_id)), 201
+        else:
+            res = UnitSchema().dump(unit)
+            return jsonify(res), 200
+    elif unit_id is not None:
+        return jsonify(error="Unit {unit_id} does not exist.".format(unit_id=unit_id)), 404
+    else:
+        return jsonify(error="Unit id is required."), 406

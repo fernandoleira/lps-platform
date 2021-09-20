@@ -7,6 +7,10 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV FLASK_ENV "production"
 
+# Create /app folder
+RUN mkdir /app
+WORKDIR /app
+
 # Copy files
 COPY . .
 

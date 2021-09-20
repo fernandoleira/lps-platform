@@ -1,0 +1,23 @@
+FROM python:3.9.1-slim as base
+
+FROM base as builder
+
+RUN mkdir /install
+WORKDIR /install
+
+COPY requirements.txt /requirements.txt
+
+RUN pip install --upgrade pip
+RUN pip install --target=/install -r /requirements.txt
+
+FROM base
+
+COPY --from=builder /install /usr/local
+COPY . /app
+
+EXPOSE 5000/tcp
+
+WORKDIR /app
+ENTRYPOINT ["python3 -m gunicorn"]
+
+CMD ["-w", "1", "--bind", "0.0.0.0:5000", "lps:app"]
