@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, url_for, render_template, request
+from flask import Blueprint, redirect, url_for, render_template, request, flash
 from flask_login import login_user, logout_user, current_user
 from lps import db
 from lps.models import User
@@ -20,9 +20,10 @@ def login():
         if user and user.check_password_hash(form.password.data):
             login_user(user)
             next_page = request.args.get('next')
+            flash('Login successful!', 'success')
             return redirect(next_page or url_for('index'))
         else:
-            flash('Invalid Username')
+            flash('Invalid Username', 'danger')
             return redirect(url_for('auth_bp.login'))
 
     return render_template('login.html', form=form)
@@ -43,7 +44,7 @@ def signup():
             db.session.commit()
             login_user(new_user)
             return redirect(url_for('index'))
-        flash('A user already exists with that email address.')
+        flash('A user already exists with that email address.', 'danger')
     
     return render_template('signup.html', form=form)
 
@@ -52,5 +53,5 @@ def signup():
 @auth_bp.route('/logout', methods=["GET", "POST"])
 def logout():
     logout_user()
-
+    flash('Logout successful!', 'success')
     return redirect(url_for('auth_bp.login'))

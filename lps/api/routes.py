@@ -1,6 +1,6 @@
 from functools import wraps
 from datetime import datetime
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, abort
 from lps import db
 from lps.models import LocatorPoint, Unit, ApiKey
 from lps.schemas import LocatorPointSchema, UnitSchema

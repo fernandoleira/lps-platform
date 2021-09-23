@@ -18,21 +18,37 @@
     <header>
         <nav class="navbar">
             <div class="container-fluid">
-                <a class="navbar-brand mx-auto" href="{{ url_for('index') }}"><img alt="LPS" src="{{ url_for('static', filename='img/logo_menu.png') }}" /></a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
-                    <span class="navbar-toggler-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#FFFFFF" class="bi bi-list" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
-                        </svg>
-                    </span>
-                </button>
-                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-                    {% block navbar %}{% endblock %}
-                </div>
+                <a class="navbar-brand" href="{{ url_for('index') }}"><img alt="LPS" src="{{ url_for('static', filename='img/logo_menu.png') }}" /></a>
+                <ul class="nav nav-pills justify-content-end">
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth_bp.logout') }}">Log Out</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth_bp.login') }}">Log In</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link" href="{{ url_for('auth_bp.signup') }}">Sign Up</a>
+                      </li>
+                    {% endif %}
+                  </ul>
             </div>
         </nav>
     </header>
 
+    <!-- Flash Messages from Server Side -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
     <!-- Body Content -->
     {% block content %}{% endblock %}
+ 
 </body>

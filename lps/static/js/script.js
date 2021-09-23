@@ -29,7 +29,7 @@ function initMap() {
 
     // Delay the request of markers
     setTimeout(() => {
-        getData(appURL + "/api/locators")
+        getData(appURL + "/map/locators")
         .then(res => {
             for (var i = 0; i < res.length; i++) {
                 // Convert to coordinates
@@ -92,11 +92,29 @@ function findCurrentLocation() {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude,
                 };
-                new google.maps.Marker({
+
+                const current_location_info = new google.maps.InfoWindow({
+                    content: '<div class="infoWindow"><h5>You are here!</h5></div>'
+                });
+
+                const current_location_marker = new google.maps.Marker({
                     position: pos,
                     icon: userIcon,
                     map: map
                 });
+
+                current_location_marker.addListener("mouseover", () => {
+                    current_location_info.open({
+                        anchor: current_location_marker,
+                        map,
+                        shouldFocus: false,
+                    });
+                })
+
+                current_location_marker.addListener("mouseout", () => {
+                    current_location_info.close();
+                })
+
                 //map.setCenter(pos);
             }
         );

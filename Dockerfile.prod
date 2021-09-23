@@ -8,11 +8,11 @@ WORKDIR /install
 COPY requirements.txt /requirements.txt
 
 RUN pip install --upgrade pip
-RUN pip install --target=/install -r /requirements.txt
+RUN pip install --target=/site-packages -r /requirements.txt
 
 FROM base
 
-COPY --from=builder /install /usr/local
+COPY --from=builder /site-packages /usr/local/lib/python3.9/site-packages
 COPY . /app
 
 EXPOSE 5000/tcp
