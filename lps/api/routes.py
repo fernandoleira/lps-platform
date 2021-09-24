@@ -4,6 +4,7 @@ from flask import Blueprint, jsonify, request, abort
 from lps import db
 from lps.models import LocatorPoint, Unit, ApiKey
 from lps.schemas import LocatorPointSchema, UnitSchema
+from lps.mail import send_alert_mail
 
 
 api_bp = Blueprint("api_bp", __name__, url_prefix="/api")

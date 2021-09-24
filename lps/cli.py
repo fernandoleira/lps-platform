@@ -32,5 +32,5 @@ def export_db():
 # MAIL SERVER COMMANDS
 @app.cli.command("test_mail")
 def test_mail():
-    msg = Message("This is a testing email from the LPS Platform!", sender="admin@lps.com", recipients=["fer.leira@hotmail.com"])
+    msg = Message("This is a testing email from the LPS Platform!", recipients=["fer.leira@hotmail.com"])
     mail.send(msg)

@@ -1,23 +1,37 @@
-FROM python:3.9.1-slim as base
+# Dockerfile for the LPS Platform
 
-FROM base as builder
+# Compile Image
+FROM python:3.9.1-slim as compile-image
 
-RUN mkdir /install
-WORKDIR /install
-
-COPY requirements.txt /requirements.txt
-
+# Install pip update & lps dependencies
+COPY requirements.txt .
 RUN pip install --upgrade pip
-RUN pip install --target=/site-packages -r /requirements.txt
+RUN pip install --user -r requirements.txt
 
-FROM base
 
-COPY --from=builder /site-packages /usr/local/lib/python3.9/site-packages
-COPY . /app
+# Build Image
+FROM python:3.9.1-slim as build-image
 
+# Copy dependencies from Compile Image
+COPY --from=compile-image /root/.local /root/.local
+
+# Create /app directory
+RUN mkdir /app
+WORKDIR /app
+
+# Copy app source files
+COPY . .
+
+# Expose port 5000 where the app will be listening to requests
 EXPOSE 5000/tcp
 
-WORKDIR /app
-ENTRYPOINT ["python3 -m gunicorn"]
+# Setup enviroment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+ENV FLASK_ENV "production"
+ENV PATH=/root/.local/bin:$PATH
+
+# Setup gunicorn
+ENTRYPOINT ["gunicorn"]
 
 CMD ["-w", "1", "--bind", "0.0.0.0:5000", "lps:app"]
