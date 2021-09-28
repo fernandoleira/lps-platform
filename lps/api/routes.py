@@ -2,9 +2,10 @@ from functools import wraps
 from datetime import datetime
 from flask import Blueprint, jsonify, request, abort
 from lps import db
-from lps.models import LocatorPoint, Unit, ApiKey
+from lps.models import LocatorPoint, Unit, User, ApiKey
 from lps.schemas import LocatorPointSchema, UnitSchema
 from lps.mail import send_alert_mail
+from lps.sms import send_alert_sms
 
 
 api_bp = Blueprint("api_bp", __name__, url_prefix="/api")
@@ -47,6 +48,12 @@ def locators():
 
         db.session.add(new_point)
         db.session.commit()
+        
+        # If new point received is an alert, send an email notification to the User
+        if new_point.point_type == "Alert":
+            send_alert_mail(new_point, new_point.unit.user)
+            send_alert_sms(new_point, new_point.unit.user)
+        
         return jsonify(message="Point {point_id} has been inserted.".format(point_id=new_point.point_id)), 201
     else:  # GET
         points_q = LocatorPoint.query.all()

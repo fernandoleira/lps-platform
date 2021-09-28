@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, url_for, render_template, request, flash
 from flask_login import login_user, logout_user, current_user
-from lps import db
+from lps import db, login_manager
 from lps.models import User
 from lps.forms import *
 
@@ -54,4 +54,19 @@ def signup():
 def logout():
     logout_user()
     flash('Logout successful!', 'success')
+    return redirect(url_for('auth_bp.login'))
+
+
+# LOGIN MANAGER ROUTES
+@login_manager.user_loader
+def load_user(email):
+    if email is not None:
+        return User.query.filter_by(email=email).first()
+    return None
+
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    # Redirect unauthorized users to Login page.
+    flash('You must be logged in to view that page.', 'danger')
     return redirect(url_for('auth_bp.login'))

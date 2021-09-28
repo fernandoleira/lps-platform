@@ -1,17 +1,66 @@
 <html>
     <head>
+    </head>
+    <body>
         <style>
             body, html {
                 margin: 0;
-                padding: 0;
+                padding: 1em;
             }
-            img {
-                margin: 0px auto;
+
+            header {
+                position: relative;
+                text-align: center;
+            }
+
+            header img {
                 width: 20em;
             }
+
+            header h1 {
+                padding-bottom: 10px;
+                font-family: Arial;
+                font-size: 2em;
+                font-weight: bold;
+                color: #000000;
+            }
+
+            header a {
+                padding: 1em;
+                font-family: Arial;
+                font-weight: bold;
+                text-decoration: none;
+                color: #FFFFFF;
+                background-color: #FF1616;
+                border: 3px solid #000000;
+                border-radius: 0.5em;
+            }
+
+            header a:hover {
+                opacity: 0.8;
+            }
+
+            main {
+                text-align: center;
+            }
+
         </style>
-    </head>
-    <body>
-        <img alt="lps" src="../static/img/logo_menu.png" />
+        <header>
+            <img alt="lps" src="../static/img/logo_menu.png" />
+            <h1>New Alert Point Has Been Received</h1>
+            <a href="http://fernandoleira.me/map">Go to the LPS Map</a>
+        </header>
+        <br />
+        <main>
+            <ul>
+                <li>Id: {{ point.point_id }}</li>
+                <li>Title: {{ point.title }}</li>
+                <li>Description: {{ point.description }}</li>
+                <li>Latitude: {{ point.lat }}</li>
+                <li>Longitude: {{ point.lon }}</li>
+                <li>Created At: {{ point.created_at }}</li>
+                <li>Unit Id: {{ point.unit_id }}</li>
+            </ul>
+        </main>
     </body>
 </html>

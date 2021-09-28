@@ -135,4 +135,3 @@ dmypy.json
 # Config & testing files
 db/
 tests/
-instance/

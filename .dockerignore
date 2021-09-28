@@ -1,5 +1,7 @@
 # Local configua=ration & test folders are ignore by Dockerfile
+.vscode/
 __pycache__/
+services/
 tests/
 venv/
 .vscode/

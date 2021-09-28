@@ -2,6 +2,7 @@ from random import choice
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from sqlalchemy import Column, Integer, FLOAT, String, TEXT, VARCHAR, BOOLEAN, TIMESTAMP, ForeignKey
+from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -16,15 +17,19 @@ class User(db.Model, UserMixin):
 
     user_id = Column('user_id', UUID(as_uuid=True), primary_key=True)
     username = Column('username', VARCHAR(50), nullable=False, unique=True)
+    phone_number = Column('phone_number', VARCHAR(11))
     email = Column('email', VARCHAR(50), nullable=False, unique=True)
     pswd_hash = Column('pswd_hash', String, nullable=False)
     is_admin = Column('is_admin', BOOLEAN)
     is_super = Column('is_super', BOOLEAN)
+    units = relationship('Unit', back_populates='user')
+    api_keys = relationship('ApiKey', back_populates='user')
 
-    def __init__(self, username, email, password, is_admin=False, is_super=False, user_id=uuid.uuid4()):
+    def __init__(self, username, email, password, phone_number=None, is_admin=False, is_super=False, user_id=uuid.uuid4()):
         self.user_id = user_id
         self.username = username
         self.email = email
+        self.phone_number = self.check_phone_number(phone_number)
         self.pswd_hash = generate_password_hash(password)
         self.is_admin = is_admin
         self.is_super = is_super
@@ -32,11 +37,19 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return '<user_id {}>'.format(self.user_id)
 
-    def check_password_hash(self, password):
-        return check_password_hash(self.pswd_hash, password)
-
     def get_id(self):
         return self.email
+
+    def check_phone_number(self, number):
+        if len(number) == 0:
+            return None
+        elif len(number) == 10:
+            return '1' + number
+        else:
+            return number
+
+    def check_password_hash(self, password):
+        return check_password_hash(self.pswd_hash, password)
 
 
 # Api Key class
@@ -44,10 +57,11 @@ class ApiKey(db.Model):
     __tablename__ = 'api_keys'
 
     api_key = Column('api_key', VARCHAR(20), primary_key=True)
-    user_id = Column('user_id', UUID(as_uuid=True), ForeignKey('users.user_id'), nullable=False)
     created_at = Column('created_at', TIMESTAMP(0), nullable=False)
     updated_at = Column('updated_at', TIMESTAMP(0), nullable=False)
     expired_at = Column('expired_at', TIMESTAMP(0), nullable=False)
+    user = relationship('User', back_populates='api_keys')
+    user_id = Column('user_id', UUID(as_uuid=True), ForeignKey('users.user_id'), nullable=False)
 
     def __init__(self, user_id, api_key=None, created_at=None, updated_at=None):
         self.user_id = user_id
@@ -99,7 +113,9 @@ class Unit(db.Model):
 
     unit_id = Column('unit_id', UUID(as_uuid=True), primary_key=True)
     name = Column('name', VARCHAR(50), nullable=False, unique=True)
+    user = relationship('User', back_populates='units')
     user_id = Column('user_id', UUID(as_uuid=True), ForeignKey('users.user_id'), nullable=False)
+    locator_points = relationship("LocatorPoint", back_populates="unit")
 
     def __init__(self, name, user_id, unit_id=uuid.uuid4()):
         self.unit_id = unit_id
@@ -121,6 +137,7 @@ class LocatorPoint(db.Model):
     lat = Column('lat', FLOAT, nullable=False)
     lon = Column('lon', FLOAT, nullable=False)
     created_at = Column('created_at', TIMESTAMP(0))
+    unit = relationship('Unit', back_populates='locator_points')
     unit_id = Column('unit_id', UUID(as_uuid=True), ForeignKey('units.unit_id'), nullable=False)
 
     def __init__(self, title, description, point_type, lat, lon, unit_id, point_id=uuid.uuid4()):

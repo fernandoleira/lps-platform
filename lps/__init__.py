@@ -57,18 +57,3 @@ app.register_blueprint(api_bp)
 # Import map blueprint
 from lps.map.routes import map_bp
 app.register_blueprint(map_bp)
-
-
-# LOGIN MANAGER ROUTES
-@login_manager.user_loader
-def load_user(email):
-    if email is not None:
-        return User.query.filter_by(email=email).first()
-    return None
-
-
-@login_manager.unauthorized_handler
-def unauthorized():
-    # Redirect unauthorized users to Login page.
-    flash('You must be logged in to view that page.', 'danger')
-    return redirect(url_for('auth_bp.login'))

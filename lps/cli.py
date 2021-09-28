@@ -2,6 +2,7 @@ from flask_mail import Message
 from lps import app, db, mail
 from lps.models import *
 from lps.seeds import seed_database, export_seed
+from lps.mail import *
 
 
 # DATABASE COMMANDS
@@ -32,5 +33,4 @@ def export_db():
 # MAIL SERVER COMMANDS
 @app.cli.command("test_mail")
 def test_mail():
-    msg = Message("This is a testing email from the LPS Platform!", recipients=["fer.leira@hotmail.com"])
-    mail.send(msg)
+    send_alert_mail("")
