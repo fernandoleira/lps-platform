@@ -1,3 +1,4 @@
+import redis
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
@@ -24,6 +25,7 @@ else:
 
 # Define Flask extensions for the app
 db = SQLAlchemy(app)
+cache_db = redis.Redis(host=app.config['REDIS_HOST'], port=app.config['REDIS_PORT'])
 ma = Marshmallow(app)
 migrate = Migrate(app, db)
 mail = Mail(app)

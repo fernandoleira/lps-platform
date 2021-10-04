@@ -6,14 +6,16 @@ services:
     image: postgres
     restart: always
     env_file:
-      - db/env/postgres.env
+      - instance/env/postgres.env
     ports:
       - 5432:5432
     volumes:
-      - lps-data:/var/lib/postgresql/data/
+      - postgres-data:/var/lib/postgresql/data/
 
-  lps:
-    image: docker.io/fernandoleira/lps-platform
+  web:
+    build:
+      context: ./
+      dockerfile: Dockerfile.prod
     restart: always
     expose:
       - 5000
@@ -21,12 +23,24 @@ services:
       - postgres
 
   nginx:
-    image: docker.io/fernandoleira/lps-nginx
+    build: ./services/nginx
     restart: always
     ports:
       - 80:80
     depends_on:
-      - lps
+      - web
+
+  cache:
+    image: redis
+    command: ["redis-server", "redis.conf"]
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - redis-data:/data
+    depends_on:
+      - postgres
 
 volumes:
-  lps-data: {}
+  postgres-data: {}
+  redis-data: {}

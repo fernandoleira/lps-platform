@@ -1,7 +1,8 @@
+from threading import Thread
 from functools import wraps
 from datetime import datetime
-from flask import Blueprint, jsonify, request, abort
-from lps import db
+from flask import Blueprint, jsonify, request, abort, copy_current_request_context
+from lps import app, db
 from lps.models import LocatorPoint, Unit, User, ApiKey
 from lps.schemas import LocatorPointSchema, UnitSchema
 from lps.mail import send_alert_mail
@@ -45,14 +46,26 @@ def locators():
             float(request.form['lon']),
             request.form['unit_id']
         )
+        
+        if request.form['point_id'] is not None:
+            new_point.point_id = request.form['point_id']
 
         db.session.add(new_point)
         db.session.commit()
         
         # If new point received is an alert, send an email notification to the User
         if new_point.point_type == "Alert":
-            send_alert_mail(new_point, new_point.unit.user)
-            send_alert_sms(new_point, new_point.unit.user)
+            @copy_current_request_context
+            def alert_mail():
+                send_alert_mail(new_point, new_point.unit.user)
+            
+            @copy_current_request_context
+            def alert_sms():
+                send_alert_sms(new_point, new_point.unit.user)
+
+            Thread(target=alert_mail).start()
+            Thread(target=alert_sms).start()
+            
         
         return jsonify(message="Point {point_id} has been inserted.".format(point_id=new_point.point_id)), 201
     else:  # GET
