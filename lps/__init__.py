@@ -25,7 +25,7 @@ else:
 
 # Define Flask extensions for the app
 db = SQLAlchemy(app)
-cache_db = redis.Redis(host=app.config['REDIS_HOST'], port=app.config['REDIS_PORT'])
+cache_db = redis.Redis(host=app.config['REDIS_HOST'], port=app.config['REDIS_PORT'], db=0, password=None, socket_timeout=None)
 ma = Marshmallow(app)
 migrate = Migrate(app, db)
 mail = Mail(app)

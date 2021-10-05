@@ -63,8 +63,10 @@ def locators():
             def alert_sms():
                 send_alert_sms(new_point, new_point.unit.user)
 
-            Thread(target=alert_mail).start()
-            Thread(target=alert_sms).start()
+            if new_point.unit.alert_mail == None:
+                Thread(target=alert_mail).start()
+            if new_point.unit.alert_sms:
+                Thread(target=alert_sms).start()
             
         
         return jsonify(message="Point {point_id} has been inserted.".format(point_id=new_point.point_id)), 201

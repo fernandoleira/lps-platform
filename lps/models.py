@@ -113,13 +113,17 @@ class Unit(db.Model):
 
     unit_id = Column('unit_id', UUID(as_uuid=True), primary_key=True)
     name = Column('name', VARCHAR(50), nullable=False, unique=True)
+    alert_mail = Column('alert_mail', BOOLEAN)
+    alert_sms = Column('alert_sms', BOOLEAN)
     user = relationship('User', back_populates='units')
     user_id = Column('user_id', UUID(as_uuid=True), ForeignKey('users.user_id'), nullable=False)
     locator_points = relationship("LocatorPoint", back_populates="unit")
 
-    def __init__(self, name, user_id, unit_id=uuid.uuid4()):
+    def __init__(self, name, user_id, alert_mail, alert_sms, unit_id=uuid.uuid4()):
         self.unit_id = unit_id
         self.name = name
+        self.alert_mail = alert_mail
+        self.alert_sms = alert_sms
         self.user_id = user_id
 
     def __repr__(self):

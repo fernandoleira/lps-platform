@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, url_for, render_template, request, flash
 from flask_login import login_user, logout_user, current_user
-from lps import db, login_manager
+from lps import db, cache_db, login_manager
 from lps.models import User
 from lps.forms import *
 
@@ -19,6 +19,9 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user and user.check_password_hash(form.password.data):
             login_user(user)
+            # Add units to cache
+            for unit in user.units:
+                cache_db.hset(str(user.user_id), str(unit.unit_id), 0)
             next_page = request.args.get('next')
             flash('Login successful!', 'success')
             return redirect(next_page or url_for('index'))

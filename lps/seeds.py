@@ -53,7 +53,7 @@ def seed_database(db):
     # Units
     seed_data = import_from_csv("units.csv")
     for obj in seed_data:
-        seed = Unit(obj["name"], obj["user_id"], unit_id=obj["unit_id"])
+        seed = Unit(obj["name"], obj["user_id"], bool(obj["alert_mail"]), bool(obj["alert_sms"]), unit_id=obj["unit_id"])
         db.session.add(seed)
         print(seed)
     db.session.commit()

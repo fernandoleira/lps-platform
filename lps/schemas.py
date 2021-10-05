@@ -13,7 +13,7 @@ class ApiKeySchema(ma.Schema):
 
 class UnitSchema(ma.Schema):
     class Meta:
-        fields = ('unit_id', 'name', 'user_id')
+        fields = ('unit_id', 'name', 'user_id', 'alert_mail', 'alert_sms')
 
 
 class LocatorPointSchema(ma.Schema):
