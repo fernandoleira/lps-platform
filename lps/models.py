@@ -25,11 +25,11 @@ class User(db.Model, UserMixin):
     units = relationship('Unit', back_populates='user')
     api_keys = relationship('ApiKey', back_populates='user')
 
-    def __init__(self, username, email, password, phone_number=None, is_admin=False, is_super=False, user_id=uuid.uuid4()):
+    def __init__(self, username, email, phone_number, password, is_admin=False, is_super=False, user_id=uuid.uuid4()):
         self.user_id = user_id
         self.username = username
         self.email = email
-        self.phone_number = self.check_phone_number(phone_number)
+        self.phone_number = self.phone_number
         self.pswd_hash = generate_password_hash(password)
         self.is_admin = is_admin
         self.is_super = is_super
@@ -39,14 +39,6 @@ class User(db.Model, UserMixin):
 
     def get_id(self):
         return self.email
-
-    def check_phone_number(self, number):
-        if len(number) == 0:
-            return None
-        elif len(number) == 10:
-            return '1' + number
-        else:
-            return number
 
     def check_password_hash(self, password):
         return check_password_hash(self.pswd_hash, password)

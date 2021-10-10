@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms_alchemy import PhoneNumberField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from lps.models import User
 
@@ -13,6 +14,7 @@ class LoginForm(FlaskForm):
 class SignupForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
+    phone_number = PhoneNumberField('Phone Number', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()]) 
     password_repeat = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Sign Up')

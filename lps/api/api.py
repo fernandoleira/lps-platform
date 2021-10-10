@@ -1,36 +1,14 @@
 from threading import Thread
-from functools import wraps
-from datetime import datetime
-from flask import Blueprint, jsonify, request, abort, copy_current_request_context
-from lps import app, db
-from lps.models import LocatorPoint, Unit, User, ApiKey
+from flask import Blueprint, jsonify, request, copy_current_request_context
+from lps import db
+from lps.models import LocatorPoint, Unit
 from lps.schemas import LocatorPointSchema, UnitSchema
-from lps.mail import send_alert_mail
+from lps.mail_utils import send_alert_mail
 from lps.sms import send_alert_sms
+from lps.api.utils import api_key_required
 
 
 api_bp = Blueprint("api_bp", __name__, url_prefix="/api")
-
-
-# Decorator for API check
-def api_key_required(func):
-    wraps(func)
-    def wrapper(*args, **kwargs):
-        api_key_header = request.headers.get('X-Api-Key')
-        if api_key_header is None:
-            abort(401)
-        
-        api_key = ApiKey.query.filter_by(api_key=api_key_header).first()
-        if api_key is None:
-            abort(401)
-
-        if api_key.expired_at <= datetime.now():
-            abort(401)
-
-        return func(*args, **kwargs)
-    
-    wrapper.__name__ = func.__name__
-    return wrapper
 
 
 # API ROUTES
@@ -53,7 +31,7 @@ def locators():
         db.session.add(new_point)
         db.session.commit()
         
-        # If new point received is an alert, send an email notification to the User
+        # If new point received is an alert, send an email and/or sms notification to the User
         if new_point.point_type == "Alert":
             @copy_current_request_context
             def alert_mail():

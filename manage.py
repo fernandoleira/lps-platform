@@ -1,19 +1,23 @@
-from flask_mail import Message
-from lps import app, db, mail
+from flask import cli
+from flask.cli import FlaskGroup
+from lps import create_app, db
 from lps.models import *
 from lps.seeds import seed_database, export_seed
-from lps.mail import *
+from lps.mail_utils import send_alert_mail
+
+app = create_app()
+cli = FlaskGroup(create_app=create_app)
 
 
 # DATABASE COMMANDS
-@app.cli.command("seed_db")
+@cli.command("seed_db")
 def seed_db():
     print("======== STARTING DATABASE SEED ========")
     seed_database(db)
     print("======== SEED COMPLETED ========")
 
 
-@app.cli.command("reset_db")
+@cli.command("reset_db")
 def reset_db():
     LocatorPoint.query.delete()
     Unit.query.delete()
@@ -23,7 +27,7 @@ def reset_db():
     print("======== RESET DATABASE ========")
 
 
-@app.cli.command("export_db")
+@cli.command("export_db")
 def export_db():
     print("======== EXPORTING DATABASE SEED ========")
     export_seed()
@@ -31,6 +35,10 @@ def export_db():
 
 
 # MAIL SERVER COMMANDS
-@app.cli.command("test_mail")
+@cli.command("test_mail")
 def test_mail():
     send_alert_mail("")
+
+
+if __name__ == '__main__':
+    cli()

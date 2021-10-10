@@ -12,6 +12,14 @@ RUN pip install --user -r requirements.txt
 # Build Image
 FROM python:3.9.1-slim as build-image
 
+# Image Labels
+LABEL org.opencontainers.image.authors="LeiraFernandoCortel@gmail.com"
+LABEL org.opencontainers.image.url="https://fernandoleira.me"
+LABEL org.opencontainers.image.source="https://github.com/fernandoleira/lps-platform"
+LABEL org.opencontainers.image.licenses="MIT"
+LABEL org.opencontainers.image.title="Locator Pointer System (LPS)"
+LABEL org.opencontainers.image.description="This is the docker image for the LPS platform server backend"
+
 # Copy dependencies from Compile Image
 COPY --from=compile-image /root/.local /root/.local
 
@@ -34,4 +42,4 @@ ENV PATH=/root/.local/bin:$PATH
 # Setup gunicorn
 ENTRYPOINT ["gunicorn"]
 
-CMD ["-w", "4", "--bind", "0.0.0.0:5000", "lps:app"]
+CMD ["-w", "3", "--bind", "0.0.0.0:5000", "lps:create_app()"]

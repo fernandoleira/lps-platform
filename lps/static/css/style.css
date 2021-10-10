@@ -4,6 +4,8 @@
 * Red: #FF1616
 */
 
+/* HTML & BODY */
+
 body,
 html {
     margin: 0;
@@ -15,6 +17,8 @@ body {
     display: flex;
     flex-flow: column;
 }
+
+/* NAVBAR */
 
 .navbar {
     flex: 0 1 auto;
@@ -30,6 +34,14 @@ body {
     color: #ffffff;
     font-weight: bold;
 }
+
+.nav-link:hover {
+    opacity: 0.8;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+/* MAP */
 
 #map {
     /*position: absolute;*/
@@ -60,7 +72,7 @@ body {
 }
 
 .unit-btn:hover {
-    opacity: 0.6;
+    opacity: 0.8;
 }
 
 .unit-btn:active {

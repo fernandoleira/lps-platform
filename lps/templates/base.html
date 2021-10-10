@@ -18,7 +18,7 @@
     <header>
         <nav class="navbar">
             <div class="container-fluid">
-                <a class="navbar-brand" href="{{ url_for('index') }}"><img alt="LPS" src="{{ url_for('static', filename='img/logo_menu.png') }}" /></a>
+                <a class="navbar-brand" href="{{ url_for('home_bp.home') }}"><img alt="LPS" src="{{ url_for('static', filename='img/logo_menu.png') }}" /></a>
                 <ul class="nav nav-pills justify-content-end">
                     {% if current_user.is_authenticated %}
                     <li class="nav-item">

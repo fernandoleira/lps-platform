@@ -33,7 +33,7 @@ def seed_database(db):
     # Users
     seed_data = import_from_csv("users.csv")
     for obj in seed_data:
-        seed = User(obj["username"], obj["email"], obj["password"], phone_number=obj["phone_number"], is_admin=bool(obj["is_admin"]), is_super=bool(obj["is_super"]), user_id=obj['user_id'])
+        seed = User(obj["username"], obj["email"], obj["phone_number"], obj["password"], is_admin=bool(obj["is_admin"]), is_super=bool(obj["is_super"]), user_id=obj['user_id'])
         db.session.add(seed)
         print(seed)
     db.session.commit()

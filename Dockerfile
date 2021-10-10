@@ -1,11 +1,17 @@
 FROM python:3.9.1-slim
+
 # Image Labels
 LABEL org.opencontainers.image.authors="LeiraFernandoCortel@gmail.com"
+LABEL org.opencontainers.image.url="https://fernandoleira.me"
+LABEL org.opencontainers.image.source="https://github.com/fernandoleira/lps-platform"
+LABEL org.opencontainers.image.licenses="MIT"
+LABEL org.opencontainers.image.title="Locator Pointer System (LPS)"
+LABEL org.opencontainers.image.description="This is the docker image for the LPS platform server backend"
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV FLASK_ENV "production"
+ENV FLASK_ENV "testing"
 
 # Create /app folder
 RUN mkdir /app
@@ -25,4 +31,4 @@ EXPOSE 5000/tcp
 ENTRYPOINT ["gunicorn"]
 
 # Command to run the app
-CMD ["-w", "1", "--bind", "0.0.0.0:5000", "lps:app"]
+CMD ["-w", "3", "--bind", "0.0.0.0:5000", "lps:create_app()"]
