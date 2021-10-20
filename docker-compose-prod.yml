@@ -17,10 +17,18 @@ services:
       context: ./
       dockerfile: Dockerfile.prod
     restart: always
-    ports:
-      - 5000:5000
+    expose:
+      - 5000
     depends_on:
       - postgres
+
+  nginx:
+    build: ./services/nginx
+    restart: always
+    ports:
+      - 80:80
+    depends_on:
+      - web
 
   cache:
     image: redis

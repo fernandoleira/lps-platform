@@ -1,5 +1,5 @@
 from threading import Thread
-from flask import Blueprint, jsonify, request, copy_current_request_context
+from flask import Blueprint, jsonify, request, copy_current_request_context, render_template
 from lps import db
 from lps.models import LocatorPoint, Unit
 from lps.schemas import LocatorPointSchema, UnitSchema
@@ -8,7 +8,13 @@ from lps.sms import send_alert_sms
 from lps.api.utils import api_key_required
 
 
-api_bp = Blueprint("api_bp", __name__, url_prefix="/api")
+api_bp = Blueprint("api_bp", __name__, url_prefix="/api", template_folder="templates", static_folder="static")
+
+
+# SWAGGER DOCUMENTATION ROUTE
+@api_bp.route('/swagger', methods=["GET"])
+def swagger():
+    return render_template("swaggerui.html")
 
 
 # API ROUTES

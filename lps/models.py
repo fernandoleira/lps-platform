@@ -29,7 +29,7 @@ class User(db.Model, UserMixin):
         self.user_id = user_id
         self.username = username
         self.email = email
-        self.phone_number = self.phone_number
+        self.phone_number = phone_number
         self.pswd_hash = generate_password_hash(password)
         self.is_admin = is_admin
         self.is_super = is_super

@@ -1,0 +1,459 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is the documentation for the LPS API.",
+    "version": "1.0.0",
+    "title": "LPS API",
+    "termsOfService": "http://fernandoleira.me/terms/",
+    "contact": {
+      "email": "LeiraFernandoCortel@gmail.com"
+    },
+    "license": {
+      "name": "MIT License",
+      "url": "https://github.com/fernandoleira/lps-platform/blob/main/LICENSE.md"
+    }
+  },
+  "host": "fernandoleira.me",
+  "basePath": "/api",
+  "tags": [
+    {
+      "name": "locators",
+      "description": "Access Locator Points data"
+    },
+    {
+      "name": "units",
+      "description": "Access Units data"
+    }
+  ],
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "paths": {
+    "/locators": {
+      "get": {
+        "tags": [
+          "locators"
+        ],
+        "summary": "Finds Locators",
+        "description": "Returns all available locator points based on api key.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/LocatorPoint"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status value"
+          },
+          "401": {
+            "description": "Unauthorized request"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "locators"
+        ],
+        "summary": "Post a new locator point.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid Request"
+          },
+          "404": {
+            "description": "Request not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/locators/{pointId}": {
+      "get": {
+        "tags": [
+          "locators"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "pointId",
+            "in": "path",
+            "description": "ID of Locator point",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid Request"
+          },
+          "404": {
+            "description": "Request not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "locators"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "pointId",
+            "in": "path",
+            "description": "ID of Locator point",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid Request"
+          },
+          "404": {
+            "description": "Request not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "locators"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "pointId",
+            "in": "path",
+            "description": "ID of Locator point",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid Request"
+          },
+          "404": {
+            "description": "Request not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/units": {
+      "get": {
+        "tags": [
+          "units"
+        ],
+        "description": "",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid Request"
+          },
+          "404": {
+            "description": "Request not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "units"
+        ],
+        "description": "",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid Request"
+          },
+          "404": {
+            "description": "Request not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/units/{unitId}": {
+      "get": {
+        "tags": [
+          "units"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "unitId",
+            "in": "path",
+            "description": "ID of Unit",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid Request"
+          },
+          "404": {
+            "description": "Request not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "units"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "unitId",
+            "in": "path",
+            "description": "ID of Unit",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid Request"
+          },
+          "404": {
+            "description": "Request not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "units"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "unitId",
+            "in": "path",
+            "description": "ID of Unit",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid Request"
+          },
+          "404": {
+            "description": "Request not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "required": [
+        "username",
+        "email",
+        "password"
+      ],
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "password": {
+          "type": "string"
+        },
+        "is_admin": {
+          "type": "boolean",
+          "default": false
+        },
+        "is_super": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "ApiKey": {
+      "type": "object",
+      "required": [
+        "api_key"
+      ],
+      "properties": {
+        "api_key": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "timestamp"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "timestamp"
+        },
+        "expired_at": {
+          "type": "string",
+          "format": "timestamp"
+        },
+        "user_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Id from user owner."
+        }
+      }
+    },
+    "Unit": {
+      "type": "object",
+      "properties": {
+        "unit_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "alert_mail": {
+          "type": "boolean",
+          "default": true
+        },
+        "alert_sms": {
+          "type": "boolean",
+          "default": true
+        },
+        "user_id": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "LocatorPoint": {
+      "type": "object",
+      "properties": {
+        "point_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "point_type": {
+          "type": "string"
+        },
+        "lat": {
+          "type": "number",
+          "format": "float32"
+        },
+        "lon": {
+          "type": "number",
+          "format": "float32"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "timestamp"
+        },
+        "unit_id": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    }
+  }
+}
