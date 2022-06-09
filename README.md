@@ -3,7 +3,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-    <img src="lps/static/img/logo_menu.png" alt="Logo">
+    <img src="api/static/img/logo_menu.png" alt="Logo">
 </p>
 
 

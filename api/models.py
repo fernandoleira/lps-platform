@@ -8,7 +8,7 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 
-from lps import db
+from api import db
 
 
 # User class
@@ -129,7 +129,7 @@ class LocatorPoint(db.Model):
     point_id = Column('point_id', UUID(as_uuid=True), primary_key=True)
     title = Column('title', VARCHAR(50), nullable=False)
     description = Column('description', TEXT)
-    point_type = Column('point_type', VARCHAR(50), nullable=False)
+    point_type = Column('point_type', VARCHAR(50), nullable=False) # Alert, Warning, Info or Ping
     lat = Column('lat', FLOAT, nullable=False)
     lon = Column('lon', FLOAT, nullable=False)
     created_at = Column('created_at', TIMESTAMP(0))

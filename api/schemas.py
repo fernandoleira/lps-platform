@@ -1,4 +1,4 @@
-from lps import ma
+from api import ma
 
 
 class UserSchema(ma.Schema):

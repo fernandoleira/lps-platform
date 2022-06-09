@@ -1,25 +1,34 @@
 from threading import Thread
 from flask import Blueprint, jsonify, request, copy_current_request_context, render_template
-from lps import db
-from lps.models import LocatorPoint, Unit
-from lps.schemas import LocatorPointSchema, UnitSchema
-from lps.mail_utils import send_alert_mail
-from lps.sms import send_alert_sms
-from lps.api.utils import api_key_required
+from api import db
+from api.models import LocatorPoint, Unit
+from api.schemas import LocatorPointSchema, UnitSchema
+from api.mail_utils import send_alert_mail
+from api.sms import send_alert_sms
+from api.utils import api_key_required
 
 
-api_bp = Blueprint("api_bp", __name__, url_prefix="/api", template_folder="templates", static_folder="static")
+api_bp = Blueprint("api_bp", __name__, url_prefix="/api/v1", static_folder="static")
 
 
-# SWAGGER DOCUMENTATION ROUTE
-@api_bp.route('/swagger', methods=["GET"])
-def swagger():
-    return render_template("swaggerui.html")
+# HOME ROUTES
+@api_bp.route('/', methods=["GET"])
+def home():
+    metadata = {
+        'title': "Locator Pointer System (LPS)",
+        'description': "This is the api project for the LPS platform server backend",
+        'author_name': "Fernando Leira Cortel",
+        'author_email': "LeiraFernandoCortel@gmail.com",
+        'source': "https://github.com/fernandoleira/lps-platform",
+        'license': "MIT"
+    }
+
+    return jsonify(metadata), 200
 
 
 # API ROUTES
 @api_bp.route('/locators', methods=["GET", "POST"])
-@api_key_required
+#@api_key_required
 def locators():
     if request.method == "POST":
         new_point = LocatorPoint(
@@ -61,7 +70,7 @@ def locators():
 
 
 @api_bp.route('/locators/<string:point_id>', methods=["GET", "PUT", "DELETE"])
-@api_key_required
+#@api_key_required
 def locator(point_id):
     point = LocatorPoint.query.filter_by(point_id=point_id).first()
     if point:
@@ -88,7 +97,7 @@ def locator(point_id):
 
 
 @api_bp.route('/units', methods=["GET", "POST"])
-@api_key_required
+#@api_key_required
 def units():
     if request.method == "POST":
         new_unit = Unit(
@@ -106,7 +115,7 @@ def units():
 
 
 @api_bp.route('/units/<string:unit_id>', methods=["GET", "PUT", "DELETE"])
-@api_key_required
+#@api_key_required
 def unit(unit_id):
     unit = Unit.query.filter_by(unit_id=unit_id).first()
     if unit:
@@ -125,3 +134,39 @@ def unit(unit_id):
         return jsonify(error="Unit {unit_id} does not exist.".format(unit_id=unit_id)), 404
     else:
         return jsonify(error="Unit id is required."), 406
+
+
+@api_bp.route('/users', methods=["GET"])
+def users():
+    users_q = User.query.all()
+
+
+@api_bp.route('/users/<string:user_id>', methods=["GET"])
+def user(user_id):
+    #TODO
+    pass
+
+
+# AUTH ROUTES
+@api_bp.route('/login', methods=["POST"])
+def login():
+    #TODO
+    pass
+
+
+@api_bp.route('/logout', methods=["POST"])
+def logout():
+    #TODO
+    pass
+
+
+@api_bp.route('/signup', methods=["POST"])
+def signup():
+    #TODO
+    pass
+
+
+# SWAGGER DOCUMENTATION ROUTE
+@api_bp.route('/swagger', methods=["GET"])
+def swagger():
+    return render_template("swaggerui.html")

@@ -1,7 +1,7 @@
 import os
 from flask import render_template, current_app
 from flask_mail import Message
-from lps import mail
+from api import mail
 
 
 # Send alert emails when new locator pouints are received

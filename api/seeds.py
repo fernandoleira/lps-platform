@@ -2,8 +2,8 @@ import csv
 from pathlib import Path
 from datetime import datetime
 
-from lps.models import *
-from lps.schemas import *
+from api.models import *
+from api.schemas import *
 
 
 SEED_FOLDER_PATH = Path("db/seeds/")

@@ -1,7 +1,8 @@
+import jwt
 from functools import wraps
 from datetime import datetime
-from flask import request, abort
-from lps.models import ApiKey
+from flask import request, abort, jsonify
+from api.models import ApiKey
 
 
 # Decorator for API check
@@ -19,6 +20,26 @@ def api_key_required(func):
         if api_key.expired_at <= datetime.now():
             abort(401)
 
+        return func(*args, **kwargs)
+    
+    wrapper.__name__ = func.__name__
+    return wrapper
+
+
+# Decorator for JWT authentication
+def jwt_required(func):
+    wraps(func)
+    def wrapper(*args, **kwargs):
+        tocken = request.headers.get('x-jwt-tocken')
+
+        if tocken is None:
+            return jsonify({'error': 'missing jwt tocken'})
+
+        try:
+            data = jwt.decode(tocken, app.config['SECRET_KEY'], algorithms=['HS256'])
+        except:
+            abort(401)
+        
         return func(*args, **kwargs)
     
     wrapper.__name__ = func.__name__
