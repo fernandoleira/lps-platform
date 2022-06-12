@@ -1,8 +1,12 @@
+import datetime
+import jwt
+import os
 from threading import Thread
 from flask import Blueprint, jsonify, request, copy_current_request_context, render_template
+from werkzeug.security import generate_password_hash, check_password_hash
 from api import db
-from api.models import LocatorPoint, Unit
-from api.schemas import LocatorPointSchema, UnitSchema
+from api.models import LocatorPoint, Unit, User
+from api.schemas import LocatorPointSchema, UnitSchema, UserSchema
 from api.mail_utils import send_alert_mail
 from api.sms import send_alert_sms
 from api.utils import api_key_required
@@ -80,7 +84,6 @@ def locator(point_id):
             point.point_type = request.form['point_type']
             point.lat = request.form['lat']
             point.lon = request.form['lon']
-            point.unit_id = request.form['unit_id']
             db.session.commit()
             return jsonify(message="Point {point_id} has been updated.".format(point_id=point_id)), 201
         elif request.method == "DELETE":
@@ -136,32 +139,68 @@ def unit(unit_id):
         return jsonify(error="Unit id is required."), 406
 
 
-@api_bp.route('/users', methods=["GET"])
+@api_bp.route('/users', methods=["GET", "POST"])
 def users():
-    users_q = User.query.all()
+    if request.method == "POST":
+        new_user = User(
+            request.form['username'],
+            request.form['email'],
+            request.form['phone_number'],
+            request.form['password']
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify(message=f"User {new_user.user_id} has been inserted."), 201
+    else: # GET
+        users_q = User.query.all()
+        users = UserSchema(many=True).dump(users_q)
+        return jsonify(users), 200
 
 
-@api_bp.route('/users/<string:user_id>', methods=["GET"])
-def user(user_id):
-    #TODO
-    pass
+@api_bp.route('/users/<string:username>', methods=["GET", "PUT", "DELETE"])
+def user(username):
+    user = User.query.filter_by(username=username).first()
+    if user:
+        if request.method == "PUT":
+            user.username = request.form['username']
+            user.email = request.form['email']
+            user.phone_number = request.form['phone_number']
+            user.pswd_hash = generate_password_hash(request.form['password'])
+            db.session.commit()
+            return jsonify(message=f"User {user.user_id} has been updated."), 201
+        elif request.method == "DELETE":
+            db.session.delete(user)
+            db.session.commit()
+            return jsonify(message=f"User {user.user_id} has been deleted."), 201
+        else: # GET
+            return jsonify(UserSchema().dump(user)), 200
+    elif username is not None:
+        return jsonify(error=f"User {username} does not exist."), 406
+    else:
+        return jsonify(error=f"User Id is required."), 406
 
 
 # AUTH ROUTES
 @api_bp.route('/login', methods=["POST"])
 def login():
-    #TODO
-    pass
+    user_q = User.query.filter_by(email=request.form['email']).first()
+    if user_q:
+        user = UserSchema().dump(user_q)
+        if user_q.check_password_hash(request.form['password']):
+            tocken = jwt.encode(
+                {
+                    'user_id': user['user_id'], 
+                    'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
+                }, 
+                "secret-key", # Needs key update to enviroment variable
+                "HS256")
+            return jsonify(tocken=tocken), 200
+    
+    return jsonify(error=f"User with email {request.form['email']} does not exist or password is incorrect."), 401
 
 
-@api_bp.route('/logout', methods=["POST"])
+@api_bp.route('/logout', methods=["DELETE"])
 def logout():
-    #TODO
-    pass
-
-
-@api_bp.route('/signup', methods=["POST"])
-def signup():
     #TODO
     pass
 

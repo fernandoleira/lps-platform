@@ -30,7 +30,7 @@ class User(db.Model, UserMixin):
         self.username = username
         self.email = email
         self.phone_number = phone_number
-        self.pswd_hash = generate_password_hash(password)
+        self.pswd_hash = generate_password_hash(password, method='sha256')
         self.is_admin = is_admin
         self.is_super = is_super
 

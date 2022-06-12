@@ -3,7 +3,7 @@ from api import ma
 
 class UserSchema(ma.Schema):
     class Meta:
-        fields = ('user_id', 'username', 'email', 'password', 'is_admin', 'is_super')
+        fields = ('user_id', 'username', 'email', 'phone_number', 'is_admin', 'is_super', 'pswd_hash')
 
 
 class ApiKeySchema(ma.Schema):
