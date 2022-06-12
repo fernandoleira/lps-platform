@@ -2,8 +2,6 @@
 
 # Locator Pointer System (LPS)
 
-**The Locator Pointer System (LPS) platform is a mapping pointer app for IoT devices.**
-<img src="https://jwt.io/img/badge-compatible.svg" />
 [![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](LICENSE)
 </div>
 
@@ -13,6 +11,8 @@
     <img src="api/static/img/logo_menu.png" alt="Logo">
 </p>
 <br />
+
+The Locator Pointer System (LPS) platform is a mapping pointer app for IoT devices.
 
 <!-- GETTING STRATED -->
 ## Getting Started
