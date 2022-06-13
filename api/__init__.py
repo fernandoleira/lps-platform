@@ -2,7 +2,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
-#from flask_login import LoginManager
 from flask_cors import CORS
 from flask_mail import Mail
 from instance.config import DevelopmentConfig, TestingConfig, ProductionConfig
@@ -23,11 +22,6 @@ migrate = Migrate()
 
 # Define the Flask Mail extension to send email notifications
 mail = Mail()
-
-# Define the Sessions Login Manager
-#login_manager = LoginManager()
-#login_manager.session_protection = 'strong'
-#login_manager.login_view = 'auth_bp.login'
 
 
 # Define the Flask app function with defined paths for templete and static files
@@ -52,10 +46,6 @@ def create_app(script_info=None):
 
     # Setup CORS configuration
     CORS(app, resources={r"/api/*": {'origins': '*'}})
-
-    # Import auth blueprint
-    #from lps.auth import auth
-    #app.register_blueprint(auth.auth_bp)
 
     # Import api blueprint
     from api.routes import api_bp

@@ -3,7 +3,7 @@ from flask.cli import AppGroup
 from api import db
 from api.models import *
 from api.seeds import seed_database, export_seed
-from api.mail_utils import send_alert_mail
+from api.mail import send_alert_mail
 
 api_cli = AppGroup('api')
 

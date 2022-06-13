@@ -1,3 +1,4 @@
+import uuid
 from random import choice
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
@@ -6,8 +7,6 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-import uuid
-
 from api import db
 
 
@@ -25,8 +24,8 @@ class User(db.Model, UserMixin):
     units = relationship('Unit', back_populates='user')
     api_keys = relationship('ApiKey', back_populates='user')
 
-    def __init__(self, username, email, phone_number, password, is_admin=False, is_super=False, user_id=uuid.uuid4()):
-        self.user_id = user_id
+    def __init__(self, username, email, phone_number, password, is_admin=False, is_super=False, user_id=None):
+        self.user_id = user_id if user_id != None else uuid.uuid4()
         self.username = username
         self.email = email
         self.phone_number = phone_number
@@ -56,7 +55,7 @@ class ApiKey(db.Model):
     user_id = Column('user_id', UUID(as_uuid=True), ForeignKey('users.user_id'), nullable=False)
 
     def __init__(self, user_id, api_key=None, created_at=None, updated_at=None):
-        self.user_id = user_id
+        self.user_id = user_id 
         if api_key != None:
             self.api_key = api_key
         else:
@@ -111,8 +110,8 @@ class Unit(db.Model):
     user_id = Column('user_id', UUID(as_uuid=True), ForeignKey('users.user_id'), nullable=False)
     locator_points = relationship("LocatorPoint", back_populates="unit")
 
-    def __init__(self, name, user_id, alert_mail, alert_sms, unit_id=uuid.uuid4()):
-        self.unit_id = unit_id
+    def __init__(self, name, user_id, alert_mail, alert_sms, unit_id=None):
+        self.unit_id = unit_id if unit_id != None else uuid.uuid4()
         self.name = name
         self.alert_mail = alert_mail
         self.alert_sms = alert_sms
@@ -136,8 +135,8 @@ class LocatorPoint(db.Model):
     unit = relationship('Unit', back_populates='locator_points')
     unit_id = Column('unit_id', UUID(as_uuid=True), ForeignKey('units.unit_id'), nullable=False)
 
-    def __init__(self, title, description, point_type, lat, lon, unit_id, point_id=uuid.uuid4()):
-        self.point_id = point_id
+    def __init__(self, title, description, point_type, lat, lon, unit_id, point_id=None):
+        self.point_id = point_id if point_id != None else uuid.uuid4()
         self.title = title
         self.description = description
         self.point_type = point_type

@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from api import db
 from api.models import LocatorPoint, Unit, User
 from api.schemas import LocatorPointSchema, UnitSchema, UserSchema
-from api.mail_utils import send_alert_mail
+from api.mail import send_alert_mail
 from api.sms import send_alert_sms
 from api.utils import api_key_required
 
@@ -65,11 +65,15 @@ def locators():
             if new_point.unit.alert_sms:
                 Thread(target=alert_sms).start()
             
-        
-        return jsonify(message="Point {point_id} has been inserted.".format(point_id=new_point.point_id)), 201
+        return jsonify(
+            message=f"Point {new_point.point_id} has been inserted.",
+            point_id=new_point.point_id
+        ), 201
+
     else:  # GET
         points_q = LocatorPoint.query.all()
         points = LocatorPointSchema(many=True).dump(points_q)
+
         return jsonify(points), 200
 
 
@@ -85,16 +89,20 @@ def locator(point_id):
             point.lat = request.form['lat']
             point.lon = request.form['lon']
             db.session.commit()
-            return jsonify(message="Point {point_id} has been updated.".format(point_id=point_id)), 201
+            return jsonify(message=f"Point {point_id} has been updated."), 200
+
         elif request.method == "DELETE":
             db.session.delete(point)
             db.session.commit()
-            return jsonify(message="Point {point_id} has been deleted.".format(point_id=point_id)), 201
+            return jsonify(message=f"Point {point_id} has been deleted."), 200
+
         else:
             res = LocatorPointSchema().dump(point)
             return jsonify(res), 200
+
     elif point_id is not None:
-        return jsonify(error="Point {point_id} does not exist.".format(point_id=point_id)), 404
+        return jsonify(error=f"Point {point_id} does not exist."), 404
+
     else:
         return jsonify(error="Point id is required."), 406
 
@@ -103,14 +111,30 @@ def locator(point_id):
 #@api_key_required
 def units():
     if request.method == "POST":
+        if 'unit_id' in request.form.keys():
+            req_unit_id = request.form['unit_id']
+        else:
+            req_unit_id = None
+
+        
+        req_alert_mail = True if request.form['alert_mail'] == 'true' else False
+        req_alert_sms = True if request.form['alert_sms'] == 'true' else False
+
         new_unit = Unit(
             request.form['name'],
-            request.form['user_id']
+            request.form['user_id'],
+            req_alert_mail,
+            req_alert_sms,
+            unit_id=req_unit_id
         )
 
         db.session.add(new_unit)
         db.session.commit()
-        return jsonify(message="Unit {unit_id} has been inserted.".format(unit_id=new_unit.unit_id)), 201
+        return jsonify(
+            message=f"Unit {new_unit.unit_id} has been inserted.",
+            unit_id=new_unit.unit_id
+        ), 201
+
     else:  # GET
         units_q = Unit.query.all()
         units = UnitSchema(many=True).dump(units_q)
@@ -125,16 +149,20 @@ def unit(unit_id):
         if request.method == "PUT":
             unit.name = request.form['name']
             db.session.commit()
-            return jsonify(message="Unit {unit_id} has been updated.".format(unit_id=unit_id)), 201
+            return jsonify(message=f"Unit {unit_id} has been updated."), 200
+
         elif request.method == "DELETE":
             db.session.delete(unit)
             db.session.commit()
-            return jsonify(message="Unit {unit_id} has been deleted.".format(unit_id=unit_id)), 201
+            return jsonify(message=f"Unit {unit_id} has been deleted."), 200
+
         else:
             res = UnitSchema().dump(unit)
             return jsonify(res), 200
+
     elif unit_id is not None:
-        return jsonify(error="Unit {unit_id} does not exist.".format(unit_id=unit_id)), 404
+        return jsonify(error=f"Unit {unit_id} does not exist."), 404
+
     else:
         return jsonify(error="Unit id is required."), 406
 
@@ -150,7 +178,11 @@ def users():
         )
         db.session.add(new_user)
         db.session.commit()
-        return jsonify(message=f"User {new_user.user_id} has been inserted."), 201
+        return jsonify(
+            message=f"User {new_user.user_id} has been inserted.",
+            user_id=new_user.user_id
+        ), 201
+
     else: # GET
         users_q = User.query.all()
         users = UserSchema(many=True).dump(users_q)
@@ -167,15 +199,19 @@ def user(username):
             user.phone_number = request.form['phone_number']
             user.pswd_hash = generate_password_hash(request.form['password'])
             db.session.commit()
-            return jsonify(message=f"User {user.user_id} has been updated."), 201
+            return jsonify(message=f"User {user.user_id} has been updated."), 200
+
         elif request.method == "DELETE":
             db.session.delete(user)
             db.session.commit()
-            return jsonify(message=f"User {user.user_id} has been deleted."), 201
+            return jsonify(message=f"User {user.user_id} has been deleted."), 200
+
         else: # GET
             return jsonify(UserSchema().dump(user)), 200
+
     elif username is not None:
         return jsonify(error=f"User {username} does not exist."), 406
+
     else:
         return jsonify(error=f"User Id is required."), 406
 
