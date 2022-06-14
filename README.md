@@ -3,7 +3,7 @@
 # Locator Pointer System (LPS)
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/fernandoleira/lps-platform/LPS%20Api%20Python%20Build)
-[![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](LICENSE)
+[![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](LICENSE.md)
 </div>
 
 <!-- PROJECT LOGO -->

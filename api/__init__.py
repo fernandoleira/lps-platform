@@ -1,10 +1,10 @@
+import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_mail import Mail
-from instance.config import DevelopmentConfig, TestingConfig, ProductionConfig
 from api.redis import RedisClient
 
 
@@ -29,20 +29,24 @@ def create_app(script_info=None):
     app = Flask(__name__, static_url_path='', static_folder='static', template_folder='templates')
 
     # Assign the app configuration based on the running envioroment
-    if app.config['ENV'] == 'production':
-        app.config.from_object(ProductionConfig)
-    elif app.config['ENV'] == 'testing':
-        app.config.from_object(TestingConfig)
+    if os.path.isdir("instance"):
+        from instance.config import DevelopmentConfig, TestingConfig, ProductionConfig
+        if app.config['ENV'] == 'production':
+            app.config.from_object(ProductionConfig)
+        elif app.config['ENV'] == 'testing':
+            app.config.from_object(TestingConfig)
+        else:
+            app.config.from_object(DevelopmentConfig)
     else:
-        app.config.from_object(DevelopmentConfig)
+        from api.config import Config
+        app.config.from_object(Config)
 
     # Init extensions
     db.init_app(app)
     cache_db.init_app(app)
     ma.init_app(app)
     migrate.init_app(app, db)
-    mail.init_app(app)
-    #login_manager.init_app(app)
+    mail = Mail(app)
 
     # Setup CORS configuration
     CORS(app, resources={r"/api/*": {'origins': '*'}})

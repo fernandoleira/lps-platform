@@ -2,7 +2,7 @@ import datetime
 import jwt
 import os
 from threading import Thread
-from flask import Blueprint, jsonify, request, copy_current_request_context, render_template
+from flask import Blueprint, jsonify, request, current_app, copy_current_request_context, render_template
 from werkzeug.security import generate_password_hash, check_password_hash
 from api import db
 from api.models import LocatorPoint, Unit, User
@@ -60,7 +60,7 @@ def locators():
             def alert_sms():
                 send_alert_sms(new_point, new_point.unit.user)
 
-            if new_point.unit.alert_mail == None:
+            if new_point.unit.alert_mail:
                 Thread(target=alert_mail).start()
             if new_point.unit.alert_sms:
                 Thread(target=alert_sms).start()
@@ -228,7 +228,7 @@ def login():
                     'user_id': user['user_id'], 
                     'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
                 }, 
-                "secret-key", # Needs key update to enviroment variable
+                current_app.secret_key,
                 "HS256")
             return jsonify(tocken=tocken), 200
     

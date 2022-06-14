@@ -1,7 +1,7 @@
 import jwt
 from functools import wraps
 from datetime import datetime
-from flask import request, abort, jsonify
+from flask import current_app, request, abort, jsonify
 from api.models import ApiKey
 
 
@@ -36,7 +36,7 @@ def jwt_required(func):
             return jsonify({'error': 'missing jwt tocken'})
 
         try:
-            data = jwt.decode(tocken, app.config['SECRET_KEY'], algorithms=['HS256'])
+            data = jwt.decode(tocken, current_app.secret_key, algorithms=['HS256'])
         except:
             abort(401)
         

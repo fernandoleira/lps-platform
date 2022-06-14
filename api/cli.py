@@ -50,4 +50,6 @@ def create_user(username_inp):
 # MAIL SERVER COMMANDS
 @api_cli.command('test_mail')
 def test_mail():
-    send_alert_mail("")
+    user = User.query.filter_by(username="fernandoleira").first()
+    locator_point = LocatorPoint.query.filter_by(point_id="a413e8de-fcf9-4f9c-8023-6bd2c2dc43e7").first()
+    send_alert_mail(locator_point, user)
