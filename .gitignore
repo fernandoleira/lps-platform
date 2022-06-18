@@ -133,5 +133,7 @@ dmypy.json
 .code-workspace
 
 # Config & testing files
-db/
 local/
+
+# Production files
+*-prod*

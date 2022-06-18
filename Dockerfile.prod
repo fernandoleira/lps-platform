@@ -42,4 +42,4 @@ ENV PATH=/root/.local/bin:$PATH
 # Setup gunicorn
 ENTRYPOINT ["gunicorn"]
 
-CMD ["-w", "3", "--bind", "0.0.0.0:5000", "lps:create_app()"]
+CMD ["-w", "3", "--bind", "0.0.0.0:5000", "api:create_app()"]

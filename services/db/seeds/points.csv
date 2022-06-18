@@ -1,0 +1,25 @@
+unit_id,created_at,description,lat,point_type,point_id,lon,title
+2955e28d-8348-4fb0-9ac6-bc1f23b373a4,2022-06-17T22:05:07.038003,Golden Gate Bridge Warning,37.819927,Warning,4ca20fe6-1b77-466a-8814-94fede5af685,-122.478256,Golden Gate Bridge
+2955e28d-8348-4fb0-9ac6-bc1f23b373a4,2022-06-17T22:05:07.038003,Salesforce Tower Info,37.789848,Info,82ca7a82-1200-4433-81b0-566cc0d26312,-122.396797,Salesforce Tower
+df6eb34f-1678-46e8-8a72-cc075129335d,2022-06-17T22:05:07.038003,Oracle Park Alert,37.778419,Alert,3d18c813-004c-4d19-bae6-8d0f0bdbf373,-122.390617,Oracle Park
+df6eb34f-1678-46e8-8a72-cc075129335d,2022-06-17T22:05:07.038003,Grace Cathedral Alert,37.791592,Alert,d34cb6f9-061c-4e77-b101-3f6a4502f3e5,-122.41256,Grace Cathedral
+df6eb34f-1678-46e8-8a72-cc075129335d,2022-06-17T22:05:07.038003,Tank Hill Info,37.75083,Info,e2ff90e6-9eae-4a44-9dea-b8599e8d928f,-122.44779,Tank Hill
+c755dff3-d58e-43e3-ab18-b6731c794c75,2022-06-17T22:05:07.038003,The Grand Opera House Warning,37.76824,Warning,4a0def01-dec3-4681-aed1-eb56fad4d9ad,-122.39929,The Grand Opera House
+c755dff3-d58e-43e3-ab18-b6731c794c75,2022-06-17T22:05:07.042003,San Francisco Zoo Ping,37.735401,Ping,12ab53e1-61a7-43bb-890f-ba466fe8c08f,-122.506653,San Francisco Zoo
+c755dff3-d58e-43e3-ab18-b6731c794c75,2022-06-17T22:05:07.042003,Ocean Beach Ping,37.760213,Ping,830689d7-005f-4c12-86b8-10756d2b5ff9,-122.510985,Ocean Beach
+cae1dded-fd4e-4d20-9000-a7d98e694482,2022-06-17T22:05:07.042003,Fenway Park Ping,42.346563,Ping,dd6e5200-85c7-4855-bf09-f166a380c710,-71.097407,Fenway Park
+cae1dded-fd4e-4d20-9000-a7d98e694482,2022-06-17T22:05:07.042003,Boston College Ping,42.335375,Ping,70b4a753-e37c-45e1-ab7d-e9fc2e1f427a,-71.168571,Boston College
+cae1dded-fd4e-4d20-9000-a7d98e694482,2022-06-17T22:05:07.042003,MIT Ping,42.359846,Ping,54101cc5-835f-4bf4-9a3e-dd07c8406621,-71.094213,MIT
+cae1dded-fd4e-4d20-9000-a7d98e694482,2022-06-17T22:05:07.042003,LoPresti Park Ping,42.370044,Ping,9e8b38a3-4c55-4fa3-8270-16874204134c,-71.043513,LoPresti Park
+3721daba-4c12-4b97-9c3c-8d92dd160975,2022-06-17T22:05:07.042003,Harvard Art Museums Warning,42.374201,Warning,0a531f73-9c67-4338-a10d-07b18e35df20,-71.114555,Harvard Art Museums
+3721daba-4c12-4b97-9c3c-8d92dd160975,2022-06-17T22:05:07.046002,Walnut Hills Cementery Warning,42.303037,Warning,cc5c6e70-fe6d-4e48-bfec-6ca0b4868a67,-71.146743,Walnut Hills Cementery
+3721daba-4c12-4b97-9c3c-8d92dd160975,2022-06-17T22:05:07.046002,Boston Latin Academy Info,42.315818,Info,c4accfa3-da61-46f5-9638-69495b2e2026,-71.084451,Boston Latin Academy
+79cfeef7-56e6-430f-911e-b5689ee7966e,2022-06-17T22:05:07.046002,Texas Capitol Alert,30.274477,Alert,0f897580-8b88-4151-a515-d3b6c094481d,-97.740718,Texas Capitol
+79cfeef7-56e6-430f-911e-b5689ee7966e,2022-06-17T22:05:07.046002,Intel Austin Alert,30.26287,Alert,4b01295a-148f-4fa6-914a-66cfe302f29e,-97.79021,Intel Austin
+79cfeef7-56e6-430f-911e-b5689ee7966e,2022-06-17T22:05:07.050003,Lions Municipal Golf Course Alert,30.28587,Alert,b35cbc28-9f33-41c7-bb84-45c310c85b87,-97.763748,Lions Municipal Golf Course
+dd1902ba-774b-465b-815c-2f8142cb12f1,2022-06-17T22:05:07.050571,Austin Airport Info,30.20199,Info,99330c2e-bb7e-436b-85cd-de3c48ad9443,-97.666992,Austin Airport
+dd1902ba-774b-465b-815c-2f8142cb12f1,2022-06-17T22:05:07.050571,NXP Semiconductors Info,30.23558,Info,5b39eb18-c53a-4ced-896b-546bd8559321,-97.8648,NXP Semiconductors
+dd1902ba-774b-465b-815c-2f8142cb12f1,2022-06-17T22:05:07.051726,Turkey Creek Trail Warning,30.326929,Warning,0b19218b-d316-460d-a8eb-d3b565b3a8e6,-97.839897,Turkey Creek Trail
+4ad9b90d-d51e-476d-afa4-2571701fec84,2022-06-17T22:05:07.051726,Vandegrift High School Ping,30.3979,Ping,15ae2d2f-51f3-40e9-8be1-6916f958c6da,-97.826721,Vandegrift High School
+4ad9b90d-d51e-476d-afa4-2571701fec84,2022-06-17T22:05:07.051726,Capital City Clays Info,30.32623,Info,8267ca91-f300-4819-989b-f5ab0bd8a331,-97.60517,Capital City Clays
+4ad9b90d-d51e-476d-afa4-2571701fec84,2022-06-17T22:05:07.051726,Circuit of the Americas Info,30.134165,Info,847ddcc2-6f00-4cce-869d-ad34f3d1f293,-97.638428,Circuit of the Americas

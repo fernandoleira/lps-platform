@@ -1,9 +1,9 @@
 import datetime
 import jwt
-import os
 from threading import Thread
-from flask import Blueprint, jsonify, request, current_app, copy_current_request_context, render_template
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask import (Blueprint, jsonify, request, current_app,
+                   copy_current_request_context, render_template)
+from werkzeug.security import generate_password_hash
 from api import db
 from api.models import LocatorPoint, Unit, User
 from api.schemas import LocatorPointSchema, UnitSchema, UserSchema
@@ -12,7 +12,8 @@ from api.sms import send_alert_sms
 from api.utils import api_key_required
 
 
-api_bp = Blueprint("api_bp", __name__, url_prefix="/api/v1", static_folder="static")
+api_bp = Blueprint("api_bp", __name__, url_prefix="/api/v1",
+                   static_folder="static")
 
 
 # HOME ROUTES
@@ -32,7 +33,7 @@ def home():
 
 # API ROUTES
 @api_bp.route('/locators', methods=["GET", "POST"])
-#@api_key_required
+# @api_key_required
 def locators():
     if request.method == "POST":
         new_point = LocatorPoint(
@@ -43,19 +44,19 @@ def locators():
             float(request.form['lon']),
             request.form['unit_id']
         )
-        
+
         if request.form['point_id'] is not None:
             new_point.point_id = request.form['point_id']
 
         db.session.add(new_point)
         db.session.commit()
-        
+
         # If new point received is an alert, send an email and/or sms notification to the User
         if new_point.point_type == "Alert":
             @copy_current_request_context
             def alert_mail():
                 send_alert_mail(new_point, new_point.unit.user)
-            
+
             @copy_current_request_context
             def alert_sms():
                 send_alert_sms(new_point, new_point.unit.user)
@@ -64,7 +65,7 @@ def locators():
                 Thread(target=alert_mail).start()
             if new_point.unit.alert_sms:
                 Thread(target=alert_sms).start()
-            
+
         return jsonify(
             message=f"Point {new_point.point_id} has been inserted.",
             point_id=new_point.point_id
@@ -78,7 +79,7 @@ def locators():
 
 
 @api_bp.route('/locators/<string:point_id>', methods=["GET", "PUT", "DELETE"])
-#@api_key_required
+# @api_key_required
 def locator(point_id):
     point = LocatorPoint.query.filter_by(point_id=point_id).first()
     if point:
@@ -108,7 +109,7 @@ def locator(point_id):
 
 
 @api_bp.route('/units', methods=["GET", "POST"])
-#@api_key_required
+# @api_key_required
 def units():
     if request.method == "POST":
         if 'unit_id' in request.form.keys():
@@ -116,7 +117,6 @@ def units():
         else:
             req_unit_id = None
 
-        
         req_alert_mail = True if request.form['alert_mail'] == 'true' else False
         req_alert_sms = True if request.form['alert_sms'] == 'true' else False
 
@@ -142,7 +142,7 @@ def units():
 
 
 @api_bp.route('/units/<string:unit_id>', methods=["GET", "PUT", "DELETE"])
-#@api_key_required
+# @api_key_required
 def unit(unit_id):
     unit = Unit.query.filter_by(unit_id=unit_id).first()
     if unit:
@@ -183,7 +183,7 @@ def users():
             user_id=new_user.user_id
         ), 201
 
-    else: # GET
+    else:  # GET
         users_q = User.query.all()
         users = UserSchema(many=True).dump(users_q)
         return jsonify(users), 200
@@ -206,7 +206,7 @@ def user(username):
             db.session.commit()
             return jsonify(message=f"User {user.user_id} has been deleted."), 200
 
-        else: # GET
+        else:  # GET
             return jsonify(UserSchema().dump(user)), 200
 
     elif username is not None:
@@ -225,19 +225,20 @@ def login():
         if user_q.check_password_hash(request.form['password']):
             tocken = jwt.encode(
                 {
-                    'user_id': user['user_id'], 
+                    'user_id': user['user_id'],
                     'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
-                }, 
+                },
                 current_app.secret_key,
                 "HS256")
+
             return jsonify(tocken=tocken), 200
-    
+
     return jsonify(error=f"User with email {request.form['email']} does not exist or password is incorrect."), 401
 
 
 @api_bp.route('/logout', methods=["DELETE"])
 def logout():
-    #TODO
+    # TODO
     pass
 
 

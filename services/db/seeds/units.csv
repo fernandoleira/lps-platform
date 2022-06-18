@@ -1,0 +1,9 @@
+unit_id,alert_sms,user_id,alert_mail,name
+2955e28d-8348-4fb0-9ac6-bc1f23b373a4,True,46dcda39-d7f8-4208-9e46-c97c8bba27d9,True,john-plane
+df6eb34f-1678-46e8-8a72-cc075129335d,True,46dcda39-d7f8-4208-9e46-c97c8bba27d9,True,john-car
+c755dff3-d58e-43e3-ab18-b6731c794c75,True,46dcda39-d7f8-4208-9e46-c97c8bba27d9,True,john-boat
+cae1dded-fd4e-4d20-9000-a7d98e694482,True,dc85fcf2-094d-4f7b-a7cf-47afacf5db86,True,mike-plane
+3721daba-4c12-4b97-9c3c-8d92dd160975,True,dc85fcf2-094d-4f7b-a7cf-47afacf5db86,True,mike-car
+79cfeef7-56e6-430f-911e-b5689ee7966e,True,256232c4-4ea6-4dd6-99cc-a8d091c73832,True,kate-plane
+dd1902ba-774b-465b-815c-2f8142cb12f1,True,256232c4-4ea6-4dd6-99cc-a8d091c73832,True,kate-car
+4ad9b90d-d51e-476d-afa4-2571701fec84,True,256232c4-4ea6-4dd6-99cc-a8d091c73832,True,kate-boat

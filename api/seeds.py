@@ -1,22 +1,27 @@
 import csv
 from pathlib import Path
 from datetime import datetime
-from api.models import *
-from api.schemas import *
+from api.models import User, Unit, LocatorPoint, ApiKey
+from api.schemas import UserSchema, UnitSchema, LocatorPointSchema, ApiKeySchema
 
 
-SEED_FOLDER_PATH = Path("db/seeds/")
+SEED_FOLDER_PATH = Path("services/db/seeds/")
 
 
 def import_from_csv(csv_filename):
-    with open(SEED_FOLDER_PATH / csv_filename) as csv_file:
-        csv_read = csv.DictReader(csv_file, delimiter=',')
-        return list(csv_read)
+    fn = SEED_FOLDER_PATH.joinpath(csv_filename)
+    if fn.is_file():
+        with open(fn) as csv_file:
+            csv_read = csv.DictReader(csv_file, delimiter=',')
+            return list(csv_read)
+    else:
+        return []
 
 
 def export_to_csv(model_dict, csv_filename="out.csv"):
     if len(model_dict) > 0:
-        with open(SEED_FOLDER_PATH / csv_filename, "w") as csv_filename:
+        fn = SEED_FOLDER_PATH.joinpath(csv_filename)
+        with open(fn, "w") as csv_filename:
             csv_filename.write(",".join(model_dict[0].keys()) + '\n')
             
             for i in range(len(model_dict)):

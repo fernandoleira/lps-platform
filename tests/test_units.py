@@ -10,11 +10,11 @@ def test_get_units(client):
 
 
 def test_post_units(client):
-    res = client.post("/api/v1/units", data = {
+    res = client.post("/api/v1/units", data={
         'name': 'test_unit',
-        'user_id': '376bfef5-e3a8-4fe3-a97c-3a5ed04cad16',
-        'alert_mail':'false',
-        'alert_sms':'false',
+        'user_id': '46dcda39-d7f8-4208-9e46-c97c8bba27d9',
+        'alert_mail': 'false',
+        'alert_sms': 'false',
         'unit_id': TESTS_UNIT_ID
     })
     assert res.status_code == 201
