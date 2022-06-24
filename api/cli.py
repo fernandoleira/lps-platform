@@ -1,4 +1,5 @@
 import click
+from flask import current_app
 from flask.cli import AppGroup
 from api import db
 from api.models import User, Unit, LocatorPoint, ApiKey
@@ -13,7 +14,7 @@ api_cli = AppGroup('api')
 @api_cli.command('seed_db')
 def seed_db():
     print("======== STARTING DATABASE SEED ========")
-    seed_database(db)
+    seed_database(db, current_app.config['SEED_PATH'])
     print("======== SEED COMPLETED ========")
 
 
@@ -30,7 +31,7 @@ def reset_db():
 @api_cli.command('export_db')
 def export_db():
     print("======== EXPORTING DATABASE SEED ========")
-    export_seed()
+    export_seed(current_app.config['SEED_PATH'])
     print("======== EXPORT COMPLETED ========")
 
 

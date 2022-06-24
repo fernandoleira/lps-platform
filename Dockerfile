@@ -11,6 +11,7 @@ LABEL org.opencontainers.image.description="This is the docker image for the LPS
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV FLASK_APP "api"
 ENV FLASK_ENV "production"
 
 # Create /app folder
