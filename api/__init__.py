@@ -29,7 +29,7 @@ def create_app(script_info=None):
     app = Flask(__name__, static_url_path='', static_folder='static', template_folder='templates')
 
     # Assign the app configuration based on the running envioroment
-    if os.path.isdir("instance"):
+    if os.path.isdir('instance') and os.getenv('BUILDING') is None:
         from instance.config import DevelopmentConfig, TestingConfig, ProductionConfig
         if app.config['ENV'] == 'production':
             app.config.from_object(ProductionConfig)

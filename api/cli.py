@@ -6,9 +6,22 @@ from api.models import User, Unit, LocatorPoint, ApiKey
 from api.seeds import seed_database, export_seed
 from api.mail import send_alert_mail
 
+
 api_cli = AppGroup('api')
 
+
+# CONFIG COMMANDS
+@api_cli.command('get_env')
+def get_env():
+    print("======== CURRENT ENV ========")
+    print(current_app.config['ENV'])
+
+
 # DATABASE COMMANDS
+@api_cli.command('get_db')
+def get_db():
+    print("======== DATABASE NAME ========")
+    print(current_app.config['SQLALCHEMY_DATABASE_URI'])
 
 
 @api_cli.command('seed_db')
