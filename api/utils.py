@@ -36,7 +36,7 @@ def jwt_required(func):
             return jsonify({'error': 'missing jwt tocken'})
 
         try:
-            data = jwt.decode(tocken, current_app.secret_key, algorithms=['HS256'])
+            data = jwt.decode(tocken, current_app.secret_key, options={'verify_exp': False}, algorithms=['HS256'])
         except:
             abort(401)
         

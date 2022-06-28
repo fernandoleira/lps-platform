@@ -35,8 +35,15 @@ def seed_database(db, seed_path):
     # Users
     seed_data = import_from_csv("users.csv", seed_path)
     for obj in seed_data:
-        seed = User(obj["username"], obj["email"], obj["phone_number"], obj["password"], is_admin=bool(
-            obj["is_admin"]), is_super=bool(obj["is_super"]), user_id=obj['user_id'])
+        if obj["is_admin"] == 'FALSE':
+            is_admin = False
+        else:
+            is_admin = True
+        if obj["is_super"] == 'FALSE':
+            is_super = False
+        else:
+            is_super = True
+        seed = User(obj["username"], obj["email"], obj["phone_number"], obj["password"], is_admin=is_admin, is_super=is_super, user_id=obj['user_id'])
         db.session.add(seed)
         print(seed)
     db.session.commit()
@@ -56,8 +63,15 @@ def seed_database(db, seed_path):
     # Units
     seed_data = import_from_csv("units.csv", seed_path)
     for obj in seed_data:
-        seed = Unit(obj["name"], obj["user_id"], bool(
-            obj["alert_mail"]), bool(obj["alert_sms"]), unit_id=obj["unit_id"])
+        if obj["alert_sms"] == 'FALSE':
+            alert_sms = False
+        else:
+            alert_sms = True
+        if obj["alert_mail"] == 'FALSE':
+            alert_mail = False
+        else:
+            alert_mail = True
+        seed = Unit(obj["name"], obj["user_id"], alert_mail, alert_sms, unit_id=obj["unit_id"])
         db.session.add(seed)
         print(seed)
     db.session.commit()

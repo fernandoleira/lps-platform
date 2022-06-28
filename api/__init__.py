@@ -43,7 +43,7 @@ def create_app(script_info=None):
 
     # Init extensions
     db.init_app(app)
-    cache_db.init_app(app)
+    cache_db.init_app(app, app.config['REDIS_PASSWORD'])
     ma.init_app(app)
     migrate.init_app(app, db)
     mail = Mail(app)

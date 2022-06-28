@@ -1,15 +1,16 @@
 import datetime
+import json
 import jwt
 from threading import Thread
 from flask import (Blueprint, jsonify, request, current_app,
                    copy_current_request_context, render_template)
 from werkzeug.security import generate_password_hash
-from api import db
+from api import db, cache_db
 from api.models import LocatorPoint, Unit, User
 from api.schemas import LocatorPointSchema, UnitSchema, UserSchema
 from api.mail import send_alert_mail
 from api.sms import send_alert_sms
-from api.utils import api_key_required
+from api.utils import jwt_required
 
 
 api_bp = Blueprint("api_bp", __name__, url_prefix="/api/v1",
@@ -109,7 +110,7 @@ def locator(point_id):
 
 
 @api_bp.route('/units', methods=["GET", "POST"])
-# @api_key_required
+@jwt_required
 def units():
     if request.method == "POST":
         if 'unit_id' in request.form.keys():
@@ -136,7 +137,13 @@ def units():
         ), 201
 
     else:  # GET
-        units_q = Unit.query.all()
+        tocken = request.headers.get('x-jwt-tocken')
+        req_user_id = jwt.decode(tocken, current_app.secret_key, options={'verify_exp': False}, algorithms=['HS256'])['user_id']
+        req_user = cache_db.get_user(req_user_id)
+
+        print(json.loads(req_user['units']))
+
+        units_q = Unit.query.filter_by(user_id=req_user_id)
         units = UnitSchema(many=True).dump(units_q)
         return jsonify(units), 200
 
@@ -213,7 +220,7 @@ def user(username):
         return jsonify(error=f"User {username} does not exist."), 406
 
     else:
-        return jsonify(error=f"User Id is required."), 406
+        return jsonify(error="User Id is required."), 406
 
 
 # AUTH ROUTES
@@ -230,6 +237,8 @@ def login():
                 },
                 current_app.secret_key,
                 "HS256")
+            
+            cache_db.add_user(user_q)
 
             return jsonify(tocken=tocken), 200
 

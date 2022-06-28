@@ -130,8 +130,7 @@ class LocatorPoint(db.Model):
     point_id = Column('point_id', VARCHAR(36), primary_key=True)
     title = Column('title', VARCHAR(50), nullable=False)
     description = Column('description', TEXT)
-    # Alert, Warning, Info or Ping
-    point_type = Column('point_type', VARCHAR(50), nullable=False)
+    point_type = Column('point_type', VARCHAR(50), nullable=False)  # Alert, Warning, Info or Ping
     lat = Column('lat', FLOAT, nullable=False)
     lon = Column('lon', FLOAT, nullable=False)
     created_at = Column('created_at', TIMESTAMP(0))
