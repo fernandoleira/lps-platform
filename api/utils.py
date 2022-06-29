@@ -8,6 +8,7 @@ from api.models import ApiKey
 # Decorator for API check
 def api_key_required(func):
     wraps(func)
+
     def wrapper(*args, **kwargs):
         api_key_header = request.headers.get('X-Api-Key')
         if api_key_header is None:
@@ -29,18 +30,27 @@ def api_key_required(func):
 # Decorator for JWT authentication
 def jwt_required(func):
     wraps(func)
+
     def wrapper(*args, **kwargs):
         tocken = request.headers.get('x-jwt-tocken')
+        auth_options = dict()
+        if current_app.config['ENV'] == 'development':
+            auth_options['verify_exp'] = False
 
         if tocken is None:
-            return jsonify({'error': 'missing jwt tocken'})
+            abort(400, description={'message': 'missing jwt tocken'})
 
         try:
-            data = jwt.decode(tocken, current_app.secret_key, options={'verify_exp': False}, algorithms=['HS256'])
-        except:
-            abort(401)
+            data = jwt.decode(tocken, current_app.secret_key, options=auth_options, algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            abort(401, description={'message': 'jwt tocken has expired'})
         
         return func(*args, **kwargs)
     
     wrapper.__name__ = func.__name__
     return wrapper
+
+
+# Function to decode jwt tockens ignoring the expiration param
+def decode_jwt_tocken(jwt_tocken):
+    return jwt.decode(jwt_tocken, current_app.secret_key, options={'verify_exp': False}, algorithms=['HS256'])

@@ -3,7 +3,7 @@ import json
 import jwt
 from threading import Thread
 from flask import (Blueprint, jsonify, request, current_app,
-                   copy_current_request_context, render_template)
+                   copy_current_request_context, render_template, abort)
 from werkzeug.security import generate_password_hash
 from api import db, cache_db
 from api.models import LocatorPoint, Unit, User
@@ -140,38 +140,38 @@ def units():
         tocken = request.headers.get('x-jwt-tocken')
         req_user_id = jwt.decode(tocken, current_app.secret_key, options={'verify_exp': False}, algorithms=['HS256'])['user_id']
         req_user = cache_db.get_user(req_user_id)
-
-        print(json.loads(req_user['units']))
-
-        units_q = Unit.query.filter_by(user_id=req_user_id)
-        units = UnitSchema(many=True).dump(units_q)
+        if bool(req_user):
+            units = json.loads(req_user['units'])
+        else:
+            units_q = Unit.query.filter_by(user_id=req_user_id)
+            units = UnitSchema(many=True).dump(units_q)
+            cache_db.add_units(units_q)
+        
         return jsonify(units), 200
 
 
 @api_bp.route('/units/<string:unit_id>', methods=["GET", "PUT", "DELETE"])
 # @api_key_required
 def unit(unit_id):
-    unit = Unit.query.filter_by(unit_id=unit_id).first()
-    if unit:
-        if request.method == "PUT":
-            unit.name = request.form['name']
-            db.session.commit()
-            return jsonify(message=f"Unit {unit_id} has been updated."), 200
+    unit = cache_db.get_unit(unit_id)
+    if not bool(unit) and unit_id is not None:
+        unit = Unit.query.filter_by(unit_id=unit_id).first()
+        if not unit:
+            return jsonify(error=f"Unit {unit_id} does not exist."), 404
 
-        elif request.method == "DELETE":
-            db.session.delete(unit)
-            db.session.commit()
-            return jsonify(message=f"Unit {unit_id} has been deleted."), 200
-
-        else:
-            res = UnitSchema().dump(unit)
-            return jsonify(res), 200
-
-    elif unit_id is not None:
-        return jsonify(error=f"Unit {unit_id} does not exist."), 404
-
+    if request.method == "PUT":
+        unit = Unit.query.filter_by(unit_id=unit_id).first()
+        unit.name = request.form['name']
+        db.session.commit()
+        return jsonify(message=f"Unit {unit_id} has been updated."), 200
+    elif request.method == "DELETE":
+        unit = Unit.query.filter_by(unit_id=unit_id).first()
+        db.session.delete(unit)
+        db.session.commit()
+        return jsonify(message=f"Unit {unit_id} has been deleted."), 200
     else:
-        return jsonify(error="Unit id is required."), 406
+        res = unit if isinstance(unit, dict) else UnitSchema().dump(unit)
+        return jsonify(res), 200
 
 
 @api_bp.route('/users', methods=["GET", "POST"])
@@ -217,7 +217,9 @@ def user(username):
             return jsonify(UserSchema().dump(user)), 200
 
     elif username is not None:
-        return jsonify(error=f"User {username} does not exist."), 406
+        abort(404, description={
+            'message': f"User {username} does not exist."
+        })  # return jsonify(error=f"User {username} does not exist."), 406
 
     else:
         return jsonify(error="User Id is required."), 406
@@ -237,7 +239,7 @@ def login():
                 },
                 current_app.secret_key,
                 "HS256")
-            
+
             cache_db.add_user(user_q)
 
             return jsonify(tocken=tocken), 200
@@ -246,12 +248,35 @@ def login():
 
 
 @api_bp.route('/logout', methods=["DELETE"])
+@jwt_required
 def logout():
-    # TODO
-    pass
+    tocken = request.headers.get('x-jwt-tocken')
+    cache_db.blacklist_tocken(tocken)
+    return jsonify(message="Logout completed"), 200
 
 
 # SWAGGER DOCUMENTATION ROUTE
 @api_bp.route('/swagger', methods=["GET"])
 def swagger():
     return render_template("swaggerui.html")
+
+
+# ERROR HANDLERS
+@api_bp.errorhandler(400)
+def bad_req(err):
+    return jsonify(error=err.description['message'], timestamp=datetime.datetime.now().timestamp()), 400
+
+
+@api_bp.errorhandler(401)
+def unauthorized_req(err):
+    return jsonify(error=err.description['message'], timestamp=datetime.datetime.now().timestamp()), 401
+
+
+@api_bp.errorhandler(404)
+def not_found_req(err):
+    return jsonify(error=err.description['message'], timestamp=datetime.datetime.now().timestamp()), 404
+
+
+@api_bp.errorhandler(406)
+def not_found_content_req(err):
+    return jsonify(error=err.description['message'], timestamp=datetime.datetime.now().timestamp()), 406
