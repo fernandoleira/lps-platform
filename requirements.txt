@@ -2,7 +2,7 @@ alembic==1.6.5
 atomicwrites==1.4.0
 attrs==21.4.0
 blinker==1.4
-certifi==2021.5.30
+certifi==2022.12.7
 charset-normalizer==2.0.6
 click==8.0.1
 colorama==0.4.4
